@@ -3,50 +3,35 @@ import 'package:let_tutor/authentication/button.dart';
 import 'package:let_tutor/authentication/input_box.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 
-
-class SignIn extends StatelessWidget {
+class SignUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.navigate_before, color: Colors.black,),
-        title: const Text('Sign in', style: TextStyle(color: Colors.black),), 
+        title: const Text('Sign up', style: TextStyle(color: Colors.black),), 
         backgroundColor: Colors.white ,),
       body: Container(
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(
-              height: 100,
-              width: 100,
-              child: Image.asset('images/logo.png')
-            ),
+            InputBox('Full name', 'Name', false),
             InputBox('Email', 'example@email.com', false),
             InputBox('Password', '******', true),
-            Container(
-              margin: const EdgeInsets.only(top: 10, right: 30),
-              child: Row(
-                mainAxisAlignment : MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Forgot Password?')
-                  )
-                ]
-              )
-            ),
-            Button('Sign in'),
+            InputBox('Confirm password', '******', true),
+            
+            Button('Sign up'),
             SocialSignin(),
 
             Row(
               mainAxisAlignment : MainAxisAlignment.center,
               children: [
-                const Text("Don't have account? "),
+                const Text('Already have an account? '),
                     
                 TextButton(
                   onPressed: () {},
-                  child: const Text('Sign up')
+                  child: const Text('Sign in')
                 )
               ]
             ),
@@ -56,4 +41,3 @@ class SignIn extends StatelessWidget {
     );
   }
 }
-

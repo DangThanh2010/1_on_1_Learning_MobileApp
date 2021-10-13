@@ -8,20 +8,20 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-          height: 50,
-          margin: const EdgeInsets.only(top: 10, left: 30, right: 30),
-          child: ElevatedButton(
-            onPressed: () {},
-            child: Text(
-              content,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(60),
-              ),
-            ),
-          )
-        );
+      height: 50,
+      margin: const EdgeInsets.only(top: 20, left: 30, right: 30),
+      child: ElevatedButton(
+        onPressed: () {},
+        child: Text(
+          content,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(60),
+          ),
+        ),
+      )
+    );
   }
 }
