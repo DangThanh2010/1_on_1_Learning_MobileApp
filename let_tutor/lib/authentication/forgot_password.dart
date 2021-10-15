@@ -10,7 +10,8 @@ class ForgotPassword extends StatelessWidget {
       appBar: AppBar(
         leading: const Icon(Icons.navigate_before, color: Colors.black,),
         title: const Text('Forgot password', style: TextStyle(color: Colors.black),), 
-        backgroundColor: Colors.white ,),
+        backgroundColor: Colors.white,
+        elevation: 0.0,),
       body: Container(
         color: Colors.white,
         child: ListView(
