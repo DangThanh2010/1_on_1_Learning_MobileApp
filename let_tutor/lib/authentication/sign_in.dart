@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:let_tutor/authentication/button.dart';
+import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/input_box.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 

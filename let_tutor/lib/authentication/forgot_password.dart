@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:let_tutor/authentication/button.dart';
+import 'package:let_tutor/global_widget/button.dart';
 
 class ForgotPassword extends StatelessWidget {
 
