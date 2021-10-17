@@ -37,7 +37,7 @@ class SignIn extends StatelessWidget {
                 ]
               )
             ),
-            Button('Sign in'),
+            Button('Sign in', () {}),
             SocialSignin(),
 
             Row(

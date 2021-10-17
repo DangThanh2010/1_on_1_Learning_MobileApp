@@ -58,7 +58,7 @@ class ForgotPassword extends StatelessWidget {
                 ],
               ) 
             ),
-            Button('Send'),
+            Button('Send', () {}),
           ],
         ),
       )

@@ -22,7 +22,7 @@ class SignUp extends StatelessWidget {
             InputBox('Password', '******', true),
             InputBox('Confirm password', '******', true),
             
-            Button('Sign up'),
+            Button('Sign up', () {}),
             SocialSignin(),
 
             Row(
