@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:let_tutor/become_a_tutor/check_box.dart';
+import 'package:let_tutor/global_widget/check_box.dart';
 import 'package:let_tutor/become_a_tutor/input_box_2.dart';
 import 'package:let_tutor/become_a_tutor/part_name.dart';
 import 'package:let_tutor/become_a_tutor/radio_button_level.dart';
@@ -64,14 +64,14 @@ class BecomeATutor extends StatelessWidget {
               child: Text('My specialties are')
             ),
 
-            CheckBox('English for Kids'),
-            CheckBox('Business English'),
-            CheckBox('Conversational English'),
-            CheckBox('TOEIC'),
-            CheckBox('TOEFL'),
-            CheckBox('IELTS'),
-            CheckBox('PET'),
-            CheckBox('KET'),
+            CheckBox('English for Kids',(String title){}),
+            CheckBox('Business English',(String title){}),
+            CheckBox('Conversational English',(String title){}),
+            CheckBox('TOEIC',(String title){}),
+            CheckBox('TOEFL',(String title){}),
+            CheckBox('IELTS',(String title){}),
+            CheckBox('PET',(String title){}),
+            CheckBox('KET',(String title){}),
 
             PartName('Video introduce'),
 
