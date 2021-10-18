@@ -12,6 +12,6 @@ void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     home: SafeArea(
-      child: BecomeATutor(),),
+      child: Profile(),),
   ));
 }

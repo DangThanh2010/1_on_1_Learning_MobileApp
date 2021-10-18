@@ -37,7 +37,7 @@ class TextInput extends StatelessWidget {
                 ),
                 hintText: hint,
               ),
-              maxLines: null,
+              maxLines: isPass ? 1 : null,
             )
           )
         ],

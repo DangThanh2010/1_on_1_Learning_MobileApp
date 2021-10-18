@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
-import 'package:let_tutor/authentication/input_box.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
+import 'package:let_tutor/global_widget/text_input.dart';
 
 class SignUp extends StatelessWidget {
 
@@ -17,10 +17,10 @@ class SignUp extends StatelessWidget {
         color: Colors.white,
         child: ListView(
           children: [
-            InputBox('Full name', 'Name', false),
-            InputBox('Email', 'example@email.com', false),
-            InputBox('Password', '******', true),
-            InputBox('Confirm password', '******', true),
+            TextInput('Full name', 'Name', false, TextInputType.text, (String value) {}),
+            TextInput('Email', 'example@email.com', false, TextInputType.emailAddress, (String value){}),
+            TextInput('Password', '******', true, TextInputType.text, (String value){}),
+            TextInput('Confirm password', '******', true, TextInputType.text, (String value){}),
             
             Button('Sign up', () {}),
             SocialSignin(),

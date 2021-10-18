@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
-import 'package:let_tutor/authentication/input_box.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
+import 'package:let_tutor/global_widget/text_input.dart';
 
 
 class SignIn extends StatelessWidget {
@@ -23,8 +23,8 @@ class SignIn extends StatelessWidget {
               width: 100,
               child: Image.asset('images/logo.png')
             ),
-            InputBox('Email', 'example@email.com', false),
-            InputBox('Password', '******', true),
+            TextInput('Email','example@email.com', false, TextInputType.emailAddress, (String value){} ),
+            TextInput('Password', '******', true, TextInputType.text, (String value){}),
             Container(
               margin: const EdgeInsets.only(top: 10, right: 30),
               child: Row(
