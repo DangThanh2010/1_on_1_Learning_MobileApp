@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/check_box.dart';
-import 'package:let_tutor/become_a_tutor/input_box_2.dart';
 import 'package:let_tutor/become_a_tutor/part_name.dart';
-import 'package:let_tutor/become_a_tutor/radio_button_level.dart';
 import 'package:let_tutor/global_widget/button.dart';
+import 'package:let_tutor/global_widget/date_input.dart';
+import 'package:let_tutor/global_widget/selected_input.dart';
+import 'package:let_tutor/global_widget/text_input.dart';
 
 class BecomeATutor extends StatelessWidget {
 
@@ -40,28 +41,28 @@ class BecomeATutor extends StatelessWidget {
               )
             ),
               
-            InputBox2('Tutoring name'),
-            InputBox2("I'm from"),
-            InputBox2('Date of Birth'),
+            TextInput("Tutor's name", "Tutor's name", false, TextInputType.text, (String value){}),
+            SelectedInput("I'm from", 'Country', (String value){}, ['Vietnam', 'Japan', 'Korean', 'Thailand']),
+            DateInput('Date of Birth', 'Birthday', false, (String value){}),
 
             PartName('CV'),
 
-            InputBox2('Interests'),
-            InputBox2('Education'),
-            InputBox2('Experience'),
-            InputBox2('Current or Previous Profession'),
+            TextInput("Interests", "Interestes", false, TextInputType.text, (String value){}),
+            TextInput("Education", "Education", false, TextInputType.text, (String value){}),
+            TextInput("Experience", "Experience", false, TextInputType.text, (String value){}),
+            TextInput("Current or Previous Profession", "Current or Previous Profession", false, TextInputType.text, (String value){}),
 
             PartName('Languages I speak'),
-            InputBox2('Languages'),
+            TextInput("Languages", "Languages", false, TextInputType.text, (String value){}),
 
             PartName('Who I teach'),
-            InputBox2('Introduction'),
+            TextInput("Introduction", "Introduction", false, TextInputType.text, (String value){}),
 
-            RadioButtonLevel(),
+            SelectedInput('I am best at teaching students who are', 'Level', (String value){}, ['Beginner', 'Intermediate', 'Advanced']),
 
             Container(
               margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-              child: Text('My specialties are')
+              child: Text('My specialties are', style: TextStyle(fontWeight: FontWeight.bold),)
             ),
 
             CheckBox('English for Kids',(String title){}),
@@ -96,7 +97,7 @@ class BecomeATutor extends StatelessWidget {
             ),
 
             Container(
-              margin: const EdgeInsets.only(bottom: 30),
+              margin: const EdgeInsets.only(bottom: 20),
               child: Button('Submit', () {}),
             )
           ],

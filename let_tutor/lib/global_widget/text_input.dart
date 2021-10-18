@@ -25,7 +25,6 @@ class TextInput extends StatelessWidget {
             )
           ),
           SizedBox(
-            height: 50,
             child: TextField(
               keyboardType: type,
               onSubmitted: (value) => callBack(value),
@@ -38,6 +37,7 @@ class TextInput extends StatelessWidget {
                 ),
                 hintText: hint,
               ),
+              maxLines: null,
             )
           )
         ],
