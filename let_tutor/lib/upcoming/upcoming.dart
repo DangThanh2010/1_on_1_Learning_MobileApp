@@ -48,10 +48,6 @@ class Upcoming extends StatelessWidget {
               DateTime(2021, 10, 21, 8, 0, 0, 0, 0),
               DateTime(2021, 10, 21, 8, 25, 0, 0, 0)
             ),
-
-
-
-
           ],
         ),
       )
