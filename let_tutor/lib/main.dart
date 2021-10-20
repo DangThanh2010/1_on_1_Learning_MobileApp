@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/advanced_settings/advanced_settings.dart';
 import 'package:let_tutor/authentication/forgot_password.dart';
 import 'package:let_tutor/authentication/sign_in.dart';
 import 'package:let_tutor/authentication/sign_up.dart';
@@ -17,6 +18,6 @@ void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     home: SafeArea(
-      child: FeedbackList(),),
+      child: AdvancedSettings('English'),),
   ));
 }
