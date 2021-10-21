@@ -8,6 +8,7 @@ import 'package:let_tutor/booking_history/booking_history.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/home/home.dart';
 import 'package:let_tutor/message/message.dart';
+import 'package:let_tutor/message_detail/message_detail.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
 import 'package:let_tutor/settings/settings.dart';
@@ -19,6 +20,6 @@ void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     home: SafeArea(
-      child: Message(),),
+      child: MessageDetail(),),
   ));
 }
