@@ -17,11 +17,13 @@ import 'package:let_tutor/settings/settings.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:let_tutor/tutors/tutors.dart';
 import 'package:let_tutor/upcoming/upcoming.dart';
+import 'package:let_tutor/video_conference/video_conference.dart';
 
 void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     home: SafeArea(
-      child: CourseDetail(),),
+      child: VideoCoference(),
+    ),
   ));
 }
