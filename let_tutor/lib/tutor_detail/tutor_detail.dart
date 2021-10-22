@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
+import 'package:let_tutor/tutor_detail/booking_dialog.dart';
 import 'package:let_tutor/tutor_detail/comment.dart';
 import 'package:let_tutor/tutor_detail/icon_text.dart';
 import 'package:let_tutor/tutor_detail/intro.dart';
@@ -35,7 +36,15 @@ class TutorDetail extends StatelessWidget {
 
             Intro(AssetImage('images/avatar3.jpg'), 'Levi', 'Japan', false),
 
-            Button('Booking', () {}),
+            Button('Booking', () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                    return BookingDialog([DateTime(2021, 10, 24, 22, 0, 0, 0, 0), DateTime(2021, 10, 24, 23, 0, 0, 0, 0), DateTime(2021, 10, 25, 7, 0, 0, 0, 0),  DateTime(2021, 10, 25, 23, 0, 0, 0, 0), DateTime(2021, 10, 26, 8, 0, 0, 0, 0),],
+                      [DateTime(2021, 10, 24, 22, 25, 0, 0, 0), DateTime(2021, 10, 24, 23, 25, 0, 0, 0), DateTime(2021, 10, 25, 7, 25, 0, 0, 0), DateTime(2021, 10, 25, 23, 25, 0, 0, 0),  DateTime(2021, 10, 26, 8, 25, 0, 0, 0)]);
+                }
+              );
+            }),
 
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
