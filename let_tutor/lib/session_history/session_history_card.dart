@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/session_history/give_feedback_dialog.dart';
 
 class SessionHistoryCard extends StatelessWidget {
   SessionHistoryCard(this.avatar, this.name, this.start, this.isFeedbacked, this.timeToLearn);
@@ -77,7 +78,13 @@ class SessionHistoryCard extends StatelessWidget {
             children: [
               Expanded(
                 child:  GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return GiveFeedbackDialog(name);              }
+                    );
+                  },
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
                     alignment: Alignment.center,
