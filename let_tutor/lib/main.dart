@@ -23,7 +23,7 @@ void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     home: SafeArea(
-      child: Home(),
+      child: TutorDetail(),
     ),
   ));
 }

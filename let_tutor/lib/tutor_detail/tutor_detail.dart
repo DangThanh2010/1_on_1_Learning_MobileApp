@@ -33,7 +33,7 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            Intro(AssetImage('images/avatar3.jpg'), 'Levi', 'Japan'),
+            Intro(AssetImage('images/avatar3.jpg'), 'Levi', 'Japan', false),
 
             Button('Booking', () {}),
 
