@@ -5,7 +5,7 @@ import 'package:let_tutor/tutor_detail/booking_dialog.dart';
 import 'package:let_tutor/tutor_detail/comment.dart';
 import 'package:let_tutor/tutor_detail/icon_text.dart';
 import 'package:let_tutor/tutor_detail/intro.dart';
-
+import 'package:let_tutor/tutor_detail/report_dialog.dart';
 
 class TutorDetail extends StatelessWidget {
 
@@ -40,7 +40,7 @@ class TutorDetail extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                    return BookingDialog([DateTime(2021, 10, 24, 22, 0, 0, 0, 0), DateTime(2021, 10, 24, 23, 0, 0, 0, 0), DateTime(2021, 10, 25, 7, 0, 0, 0, 0),  DateTime(2021, 10, 25, 23, 0, 0, 0, 0), DateTime(2021, 10, 26, 8, 0, 0, 0, 0),],
+                  return BookingDialog([DateTime(2021, 10, 24, 22, 0, 0, 0, 0), DateTime(2021, 10, 24, 23, 0, 0, 0, 0), DateTime(2021, 10, 25, 7, 0, 0, 0, 0),  DateTime(2021, 10, 25, 23, 0, 0, 0, 0), DateTime(2021, 10, 26, 8, 0, 0, 0, 0),],
                       [DateTime(2021, 10, 24, 22, 25, 0, 0, 0), DateTime(2021, 10, 24, 23, 25, 0, 0, 0), DateTime(2021, 10, 25, 7, 25, 0, 0, 0), DateTime(2021, 10, 25, 23, 25, 0, 0, 0),  DateTime(2021, 10, 26, 8, 25, 0, 0, 0)]);
                 }
               );
@@ -52,7 +52,13 @@ class TutorDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                    IconText(Icons.chat, 'Message', () {},),
-                   IconText(Icons.report, 'Report', () {},)
+                   IconText(Icons.report, 'Report', () {
+                     showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ReportDialog('Levi');              }
+                    );
+                  },)
                 ],
               ) 
             ),
