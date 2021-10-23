@@ -3,7 +3,6 @@ import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
 
-
 class SignIn extends StatelessWidget {
 
   @override
@@ -27,14 +26,10 @@ class SignIn extends StatelessWidget {
             TextInput('Password', '******', true, TextInputType.text, (String value){}),
             Container(
               margin: const EdgeInsets.only(top: 10, right: 30),
-              child: Row(
-                mainAxisAlignment : MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Forgot Password?')
-                  )
-                ]
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {},
+                child: const Text('Forgot Password?')
               )
             ),
             Button('Sign in', () {}),
@@ -57,4 +52,3 @@ class SignIn extends StatelessWidget {
     );
   }
 }
-

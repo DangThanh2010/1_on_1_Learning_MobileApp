@@ -56,7 +56,8 @@ class TutorDetail extends StatelessWidget {
                      showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return ReportDialog('Levi');              }
+                        return ReportDialog('Levi'); 
+                      }
                     );
                   },)
                 ],
