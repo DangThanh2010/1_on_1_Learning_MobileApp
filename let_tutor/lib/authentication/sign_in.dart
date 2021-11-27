@@ -46,7 +46,7 @@ class _SignInState extends State<SignIn>{
         showSnackBar("The email is not a valid email address.");
       }
       else{
-        showSnackBar("Email or password incorrectly");
+        showSnackBar("Email or password incorrectly.");
       }
     }
   }

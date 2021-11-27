@@ -2,7 +2,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 
-class ForgotPassword extends StatelessWidget {
+class ForgotPassword extends StatefulWidget{
+  @override
+  _ForgotPasswordState createState() => _ForgotPasswordState();
+}
+
+class _ForgotPasswordState extends State<ForgotPassword>{
+  String email= "";
+
+  bool validateEmail(String Email){
+    for(int i = 0; i < Email.length; i++){
+      if(Email[i] == '@'){
+        return true;
+      }
+    }
+    return false;
+  }
+  void showSnackBar(String content){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),),
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
+  void handleForgotPassword(){
+    if(email == ""){
+      showSnackBar("Email cannot be empty.");
+    }else if(!validateEmail(email)){
+      showSnackBar("The email is not a valid email address.");
+    }else {
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +72,19 @@ class ForgotPassword extends StatelessWidget {
                     flex: 1,
                     child: Container(
                       alignment: Alignment.centerLeft,
-                      child: Icon(Icons.mail, color: Colors.blue)
+                      child: const Icon(Icons.mail, color: Colors.blue)
                     )
                   ),
 
                   Expanded(
                     flex: 8,
                     child: TextField(
+                      onChanged: (value) => setState(() {
+                        email = value;
+                      }),
+                      onSubmitted: (value) => setState(() {
+                        email = value;
+                      }),
                       obscureText: false,
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
@@ -57,7 +95,7 @@ class ForgotPassword extends StatelessWidget {
                 ],
               ) 
             ),
-            Button('Send', () {}),
+            Button('Send', handleForgotPassword),
           ],
         ),
       )
