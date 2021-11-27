@@ -109,7 +109,7 @@ class Profile extends StatelessWidget {
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button('Save', () {}),
+              child: Button('Save', () { Navigator.pop(context);}),
             )
           ],
         ),

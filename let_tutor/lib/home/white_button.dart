@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class WhiteButton extends StatelessWidget {
-  WhiteButton(this.content);
+  WhiteButton(this.content, this.callBack);
 
   final String content;
+  final VoidCallback callBack;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: callBack,
       child: Text(
         content,
         style: TextStyle(

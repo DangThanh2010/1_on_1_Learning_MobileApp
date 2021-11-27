@@ -26,6 +26,8 @@ void main() {
     routes: {
       "/forgot_password": (context) => SafeArea(child: ForgotPassword()),
       "/sign_up": (context) => SafeArea(child: SignUp()),
+      "/profile": (context) => SafeArea(child: Profile()),
+      "/video_conference": (context) => SafeArea(child: VideoCoference()),
     },
     home: SafeArea(
       child: MyApp(),
@@ -49,9 +51,15 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void setSelectedIndex(int value){
+    setState(() {
+      selectedIndex = value;
+    });
+  }
+
   Widget displayScreenWhenLoggedIn(){
     if(selectedIndex == 0){
-      return Home();
+      return Home(setSelectedIndex);
     }
     else if(selectedIndex == 1){
       return Message();

@@ -4,6 +4,9 @@ import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
 
 class Home extends StatelessWidget {
+  Home(this.setSelectedIndex);
+
+  final void Function(int) setSelectedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,9 @@ class Home extends StatelessWidget {
                 )
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, "/profile");
+            },
           )
         ],
         backgroundColor: Colors.white,
@@ -78,12 +83,12 @@ class Home extends StatelessWidget {
                             )
                           )
                         ), 
-                        WhiteButton('Enter lesson room')
+                        WhiteButton('Enter lesson room', (){ Navigator.pushNamed(context, "/video_conference");})
                       ],
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      child: WhiteButton('Book more')
+                      child: WhiteButton('Book more', (){ setSelectedIndex(3); })
                     )
                   ]
                 )
@@ -105,7 +110,7 @@ class Home extends StatelessWidget {
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: (){ setSelectedIndex(3); },
                         child: const Text('See all >')
                       )
                     )
