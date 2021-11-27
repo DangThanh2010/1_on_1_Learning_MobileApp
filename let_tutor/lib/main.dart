@@ -23,6 +23,10 @@ void main() {
   runApp(MaterialApp(
     title: "Let Tutor",
     debugShowCheckedModeBanner: false,
+    routes: {
+      "/forgot_password": (context) => SafeArea(child: ForgotPassword()),
+      "/sign_up": (context) => SafeArea(child: SignUp()),
+    },
     home: SafeArea(
       child: MyApp(),
     ),
@@ -36,8 +40,14 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp> {
-  int isLogin = 1;
+  bool isLogin = false;
   int selectedIndex = 0;
+
+  void setLoginStatus(){
+    setState(() {
+      isLogin = !isLogin;
+    });
+  }
 
   Widget displayScreenWhenLoggedIn(){
     if(selectedIndex == 0){
@@ -61,8 +71,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget displayScreen() {
-    if(isLogin == 0){
-      return SignIn();
+    if(!isLogin){
+      return SignIn(setLoginStatus);
     }
     else {
       return Scaffold(

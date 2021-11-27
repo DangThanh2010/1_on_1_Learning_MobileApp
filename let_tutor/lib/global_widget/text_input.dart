@@ -28,6 +28,7 @@ class TextInput extends StatelessWidget {
             child: TextField(
               keyboardType: type,
               onSubmitted: (value) => callBack(value),
+              onChanged: (value) => callBack(value),
               obscureText: isPass,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
