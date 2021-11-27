@@ -30,7 +30,7 @@ class Tutors extends StatelessWidget {
               alignment: Alignment.centerRight,
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
               child: TextButton(
-                onPressed: () {}, 
+                onPressed: () {Navigator.pushNamed(context, "/become_a_tutor"); }, 
                 child: const Text('Become a tutor >')
               )
             ),

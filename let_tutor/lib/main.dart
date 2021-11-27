@@ -28,6 +28,8 @@ void main() {
       "/sign_up": (context) => SafeArea(child: SignUp()),
       "/profile": (context) => SafeArea(child: Profile()),
       "/video_conference": (context) => SafeArea(child: VideoCoference()),
+      "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
+
     },
     home: SafeArea(
       child: MyApp(),

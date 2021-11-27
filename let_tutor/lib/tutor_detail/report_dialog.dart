@@ -17,9 +17,9 @@ class ReportDialog extends StatelessWidget{
         child: ListView(
           children: [
             Text("Help us understand what's happening", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),),
-            CheckBox('This tutor is annoying me', (String value) {}),
-            CheckBox('This profile is pretending be someone or is fake', (String value) {}),
-            CheckBox('Inappropriate profile photo', (String value) {}),
+            CheckBox('This tutor is annoying me', (String value) {}, (String value) {}),
+            CheckBox('This profile is pretending be someone or is fake', (String value) {}, (String value) {}),
+            CheckBox('Inappropriate profile photo', (String value) {}, (String value) {}),
             TextInput('Other', 'Other reasons', false, TextInputType.text, (String value){}),
 
             Button('Report', () {

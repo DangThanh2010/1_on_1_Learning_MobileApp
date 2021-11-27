@@ -92,7 +92,7 @@ class UpcomingCard extends StatelessWidget {
 
               Expanded(
                 child:  GestureDetector(
-                  onTap: hourDifference <= 24 ? () {} : null,
+                  onTap: hourDifference <= 24 ? () { Navigator.pushNamed(context, "/video_conference");} : null,
                   child: Container(
                     alignment: Alignment.center,
                     height: 40,

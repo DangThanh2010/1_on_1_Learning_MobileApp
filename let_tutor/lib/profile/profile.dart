@@ -95,14 +95,14 @@ class Profile extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     )
                   ),
-                  CheckBox('English for Kids', (String title){}),
-                  CheckBox('Business English', (String title){}),
-                  CheckBox('Conversational English',(String title){}),
-                  CheckBox('TOEIC',(String title){}),
-                  CheckBox('TOEFL',(String title){}),
-                  CheckBox('IELTS',(String title){}),
-                  CheckBox('PET',(String title){}),
-                  CheckBox('KET',(String title){}),
+                  CheckBox('English for Kids', (String title){}, (String title){}),
+                  CheckBox('Business English', (String title){}, (String title){}),
+                  CheckBox('Conversational English',(String title){}, (String title){}),
+                  CheckBox('TOEIC',(String title){}, (String title){}),
+                  CheckBox('TOEFL',(String title){}, (String title){}),
+                  CheckBox('IELTS',(String title){}, (String title){}),
+                  CheckBox('PET',(String title){}, (String title){}),
+                  CheckBox('KET',(String title){}, (String title){}),
                 ]
               )
             ),
