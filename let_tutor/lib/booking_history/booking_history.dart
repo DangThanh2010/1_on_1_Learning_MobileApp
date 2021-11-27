@@ -7,6 +7,9 @@ class BookingHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const BackButton(
+          color: Colors.black
+        ),
         title: const Text('Booking History', style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.white,
         elevation: 0.0,),

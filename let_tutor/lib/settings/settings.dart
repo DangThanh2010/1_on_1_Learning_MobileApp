@@ -4,6 +4,10 @@ import 'package:let_tutor/settings/account_info.dart';
 import 'package:let_tutor/settings/setting_feature.dart';
 
 class Settings extends StatelessWidget {
+  Settings(this.setLoginStatus, this.setSelectedIndex);
+
+  final VoidCallback setLoginStatus;
+  final void Function(int) setSelectedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +26,10 @@ class Settings extends StatelessWidget {
               margin: const EdgeInsets.only(top: 20, bottom: 20),
               child: Column(
                 children: [
-                  SettingFeature(Icon(Icons.account_box_outlined), 'View Feedbacks', Icon(Icons.navigate_next),() {},),
-                  SettingFeature(Icon(Icons.list_alt_outlined), 'Booking History', Icon(Icons.navigate_next),() {},),
-                  SettingFeature(Icon(Icons.timelapse_outlined), 'Session History', Icon(Icons.navigate_next),() {},),
-                  SettingFeature(Icon(Icons.settings_outlined), 'Advanced Settings', Icon(Icons.navigate_next),() {},),
+                  SettingFeature(Icon(Icons.account_box_outlined), 'View Feedbacks', Icon(Icons.navigate_next),() { Navigator.pushNamed(context, "/feedback_list"); },),
+                  SettingFeature(Icon(Icons.list_alt_outlined), 'Booking History', Icon(Icons.navigate_next),() { Navigator.pushNamed(context, "/booking_history"); },),
+                  SettingFeature(Icon(Icons.timelapse_outlined), 'Session History', Icon(Icons.navigate_next),() { Navigator.pushNamed(context, "/session_history"); },),
+                  SettingFeature(Icon(Icons.settings_outlined), 'Advanced Settings', Icon(Icons.navigate_next),() { Navigator.pushNamed(context, "/advanced_settings"); },),
                 ],
               )
             ),
@@ -50,7 +54,10 @@ class Settings extends StatelessWidget {
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button('Log out', () {}),
+              child: Button('Log out', (){
+                setLoginStatus();
+                setSelectedIndex(0);
+              }),
             ),
           ],
         ),

@@ -29,7 +29,10 @@ void main() {
       "/profile": (context) => SafeArea(child: Profile()),
       "/video_conference": (context) => SafeArea(child: VideoCoference()),
       "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
-
+      "/feedback_list": (context) => SafeArea(child: FeedbackList()),
+      "/booking_history": (context) => SafeArea(child: BookingHistory()),
+      "/session_history": (context) => SafeArea(child: SessionHistory()),
+      "/advanced_settings": (context) => SafeArea(child: AdvancedSettings("English")),
     },
     home: SafeArea(
       child: MyApp(),
@@ -76,7 +79,7 @@ class _MyAppState extends State<MyApp> {
       return Courses();
     }
     else {
-      return Settings();
+      return Settings(setLoginStatus, setSelectedIndex);
     }
   }
 

@@ -12,6 +12,9 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const BackButton(
+          color: Colors.black
+        ),
         title: const Text('Profile', style: TextStyle(color: Colors.black),), 
         backgroundColor: Colors.white,
         elevation: 0.0,),
