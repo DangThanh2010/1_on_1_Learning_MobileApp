@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
   Home(this.setSelectedIndex);
@@ -10,6 +11,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home', style: TextStyle(color: Colors.black),),
@@ -121,17 +124,7 @@ class Home extends StatelessWidget {
             
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TutorCard(AssetImage('images/avatar.jpg'), 'April Corpuz', [Tag('English', true), Tag('Vietnamese', true)], 
-                          'I was born in Chester, United Kingdom, but now live in Vietnam. I am a person of varied interests, I love baking, reading, photography and languages. I enjoy teaching English to all ages and levels as I believe it opens the door to global opportunities. I am a fun, talkative person who loves to find out about others cultures and experience.',
-                          true),
-                TutorCard(AssetImage('images/avatar2.jpg'), 'Keegan', [Tag('English', true), Tag('Tagalog', true)], 
-                          'I was born in Chester, United Kingdom, but now live in Manila, Philippines. I am a person of varied interests, I love baking, reading, photography and languages. I enjoy teaching English to all ages and levels as I believe it opens the door to global opportunities. I am a fun, talkative person who loves to find out about others cultures and experience.',
-                          false),
-                TutorCard(AssetImage('images/avatar3.jpg'), 'Levi', [Tag('English', true), Tag('Japanese', true), Tag('Vietnamese', true), Tag('Korean', true)], 
-                          'I was born in Chester, United Kingdom, but now live in Japan. I am a person of varied interests, I love baking, reading, photography and languages. I enjoy teaching English to all ages and levels as I believe it opens the door to global opportunities. I am a fun, talkative person who loves to find out about others cultures and experience.',
-                          false),
-              ],
+              children: tutors.list.map((e) => TutorCard(e.id)).toList()
             )
           ],
         ),

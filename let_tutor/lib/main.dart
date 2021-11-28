@@ -7,10 +7,15 @@ import 'package:let_tutor/become_a_tutor/become_a_tutor.dart';
 import 'package:let_tutor/booking_history/booking_history.dart';
 import 'package:let_tutor/course_detail/course_detail.dart';
 import 'package:let_tutor/courses/courses.dart';
+import 'package:let_tutor/data/data.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/home/home.dart';
 import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
+import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
 import 'package:let_tutor/settings/settings.dart';
@@ -18,6 +23,7 @@ import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:let_tutor/tutors/tutors.dart';
 import 'package:let_tutor/upcoming/upcoming.dart';
 import 'package:let_tutor/video_conference/video_conference.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -49,6 +55,11 @@ class MyApp extends StatefulWidget{
 class _MyAppState extends State<MyApp> {
   bool isLogin = false;
   int selectedIndex = 0;
+
+  final ListTutorDTO listTutor = listTutorDTO;
+  final ListCommentDTO listComment = listCommentDTO;
+  final List<LanguageDTO> listLanguage = listLanguageDTO;
+  final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
 
   void setLoginStatus(){
     setState(() {
@@ -133,6 +144,14 @@ class _MyAppState extends State<MyApp> {
   }
   @override
   Widget build(BuildContext context) {
-    return displayScreen();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => listTutor),
+        ChangeNotifierProvider(create: (context) => listComment),
+        Provider(create: (context) => listLanguage),
+        Provider(create: (context) => listSpecialty),
+      ],
+      child: displayScreen()
+    );
   }
 }

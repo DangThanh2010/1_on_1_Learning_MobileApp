@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
-
+import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:provider/provider.dart';
 
 class TutorCardForSearch extends StatelessWidget {
-  TutorCardForSearch(this.avatar, this.name, this.tags, this.introduce);
+  TutorCardForSearch(this.id);
 
-  final ImageProvider avatar;
-  final String name;
-  final List<Tag> tags;
-  final String introduce;
+  final int id;
+
+  List<Widget> generateLanguageTags(List<LanguageDTO> listLanguage){
+    List<Tag> tags = [];
+    for(int j = 0; j < listLanguage.length; j++){
+      if(id == listLanguage[j].idTutor){
+        tags.add(Tag(listLanguage[j].language, true));
+      }
+    }
+    return tags;
+  }
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
+    TutorDTO? tutor = tutors.getTutor(id);
+    
     return GestureDetector(
       onTap: () {},
       child: Card(
@@ -29,7 +43,7 @@ class TutorCardForSearch extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: avatar,
+                      image: AssetImage(tutor!.avatar),
                     )
                   ),
                 ),
@@ -39,7 +53,7 @@ class TutorCardForSearch extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(name, style: TextStyle(fontWeight: FontWeight.bold),),
+                          Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
                           Expanded(
                             child: 
                             Container (
@@ -62,7 +76,7 @@ class TutorCardForSearch extends StatelessWidget {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: tags
+                            children: generateLanguageTags(languages)
                           )
                         )
                       )
@@ -77,7 +91,7 @@ class TutorCardForSearch extends StatelessWidget {
               alignment: Alignment.topLeft,
               height: 68,
               child: Text(
-                introduce,
+                tutor.introduction,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
               ),

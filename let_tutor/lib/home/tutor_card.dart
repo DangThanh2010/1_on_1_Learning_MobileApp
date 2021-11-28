@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
+import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:provider/provider.dart';
 
-class TutorCard extends StatefulWidget {
-  TutorCard(this.avatar, this.name, this.tags, this.introduce, this.isFavourite);
+class TutorCard extends StatelessWidget {
+  TutorCard(this.id);
 
-  final ImageProvider avatar;
-  final String name;
-  final List<Tag> tags;
-  final String introduce;
-  final bool isFavourite;
+  final int id;
 
-  _TutorCardState createState() => _TutorCardState(avatar, name, tags,introduce, isFavourite);
-}
-
-class _TutorCardState extends State<TutorCard>{
-  _TutorCardState(this.avatar, this.name, this.tags, this.introduce, this.isFavourite);
-
-  final ImageProvider avatar;
-  final String name;
-  final List<Tag> tags;
-  final String introduce;
-  final bool isFavourite;
-
-  bool _isFavourite = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _isFavourite = isFavourite;
+  List<Widget> generateLanguageTags(List<LanguageDTO> listLanguage){
+    List<Tag> tags = [];
+    for(int j = 0; j < listLanguage.length; j++){
+      if(id == listLanguage[j].idTutor){
+        tags.add(Tag(listLanguage[j].language, true));
+      }
+    }
+    return tags;
   }
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
+    TutorDTO? tutor = tutors.getTutor(id);
+
     return GestureDetector(
       onTap: () {},
       child: Card(
@@ -49,7 +43,7 @@ class _TutorCardState extends State<TutorCard>{
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: avatar,
+                      image: AssetImage(tutor!.avatar),
                     )
                   ),
                 ),
@@ -62,7 +56,7 @@ class _TutorCardState extends State<TutorCard>{
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(name, style: TextStyle(fontWeight: FontWeight.bold),),
+                              Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold),),
                               Row(
                                 children: [
                                   Icon(Icons.star_rate, color: Colors.yellow,),
@@ -81,11 +75,9 @@ class _TutorCardState extends State<TutorCard>{
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    _isFavourite = !_isFavourite;
-                                  });
+                                  tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);
                                 },
-                                child: _isFavourite ? Icon(Icons.favorite, color: Colors.pink,) : Icon(Icons.favorite_border, color: Colors.pink,)
+                                child: tutor.isFavourite ? const Icon(Icons.favorite, color: Colors.pink,) : const Icon(Icons.favorite_border, color: Colors.pink,)
                               )
                             )
                           )
@@ -98,7 +90,7 @@ class _TutorCardState extends State<TutorCard>{
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: tags
+                            children: generateLanguageTags(languages)
                           )
                         )
                       )
@@ -113,7 +105,7 @@ class _TutorCardState extends State<TutorCard>{
               alignment: Alignment.topLeft,
               height: 68,
               child: Text(
-                introduce,
+                tutor.introduction,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
               ),
