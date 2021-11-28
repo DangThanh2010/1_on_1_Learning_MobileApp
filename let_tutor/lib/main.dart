@@ -26,24 +26,45 @@ import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: "Let Tutor",
-    debugShowCheckedModeBanner: false,
-    routes: {
-      "/forgot_password": (context) => SafeArea(child: ForgotPassword()),
-      "/sign_up": (context) => SafeArea(child: SignUp()),
-      "/profile": (context) => SafeArea(child: Profile()),
-      "/video_conference": (context) => SafeArea(child: VideoCoference()),
-      "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
-      "/feedback_list": (context) => SafeArea(child: FeedbackList()),
-      "/booking_history": (context) => SafeArea(child: BookingHistory()),
-      "/session_history": (context) => SafeArea(child: SessionHistory()),
-      "/advanced_settings": (context) => SafeArea(child: AdvancedSettings("English")),
-    },
-    home: SafeArea(
-      child: MyApp(),
-    ),
-  ));
+  runApp(App());
+}
+
+class App extends StatelessWidget{
+  final ListTutorDTO listTutor = listTutorDTO;
+  final ListCommentDTO listComment = listCommentDTO;
+  final List<LanguageDTO> listLanguage = listLanguageDTO;
+  final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => listTutor),
+        ChangeNotifierProvider(create: (context) => listComment),
+        Provider(create: (context) => listLanguage),
+        Provider(create: (context) => listSpecialty),
+      ],
+      child: MaterialApp(
+        title: "Let Tutor",
+        debugShowCheckedModeBanner: false,
+        routes: {
+          "/forgot_password": (context) => SafeArea(child: ForgotPassword()),
+          "/sign_up": (context) => SafeArea(child: SignUp()),
+          "/profile": (context) => SafeArea(child: Profile()),
+          "/video_conference": (context) => SafeArea(child: VideoCoference()),
+          "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
+          "/feedback_list": (context) => SafeArea(child: FeedbackList()),
+          "/booking_history": (context) => SafeArea(child: BookingHistory()),
+          "/session_history": (context) => SafeArea(child: SessionHistory()),
+          "/advanced_settings": (context) => SafeArea(child: AdvancedSettings("English")),
+        },
+        home: SafeArea(
+          child: MyApp(),
+        ),
+      )
+    );
+  }
+  
 }
 
 class MyApp extends StatefulWidget{
@@ -55,11 +76,6 @@ class MyApp extends StatefulWidget{
 class _MyAppState extends State<MyApp> {
   bool isLogin = false;
   int selectedIndex = 0;
-
-  final ListTutorDTO listTutor = listTutorDTO;
-  final ListCommentDTO listComment = listCommentDTO;
-  final List<LanguageDTO> listLanguage = listLanguageDTO;
-  final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
 
   void setLoginStatus(){
     setState(() {
@@ -144,14 +160,6 @@ class _MyAppState extends State<MyApp> {
   }
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => listTutor),
-        ChangeNotifierProvider(create: (context) => listComment),
-        Provider(create: (context) => listLanguage),
-        Provider(create: (context) => listSpecialty),
-      ],
-      child: displayScreen()
-    );
+    return displayScreen();
   }
 }

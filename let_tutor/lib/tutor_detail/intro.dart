@@ -1,32 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Intro extends StatefulWidget {
-  Intro(this.avatar, this.name, this.nation, this.isFavourite);
+class Intro extends StatelessWidget {
+
+  Intro(this.avatar, this.name, this.nation, this.isFavourite, this.callBack);
 
   final ImageProvider avatar;
   final String name;
   final String nation;
   final bool isFavourite;
-
-  _IntroState createState() => _IntroState(avatar, name, nation, isFavourite);
-
-}
-
-class _IntroState extends State<Intro>{
-  _IntroState(this.avatar, this.name, this.nation, this.isFavourite);
-
-  final ImageProvider avatar;
-  final String name;
-  final String nation;
-  final bool isFavourite;
-
-  bool _isFavourite = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _isFavourite = isFavourite;
-  }
+  final VoidCallback callBack;
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +54,9 @@ class _IntroState extends State<Intro>{
                 ),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      _isFavourite = !_isFavourite;
-                    });
+                    callBack();
                   },
-                  child: _isFavourite ? Icon(Icons.favorite, color: Colors.pink,) : Icon(Icons.favorite_border, color: Colors.pink,),
+                  child: isFavourite ? Icon(Icons.favorite, color: Colors.pink,) : Icon(Icons.favorite_border, color: Colors.pink,),
                 ),
               ],
             )

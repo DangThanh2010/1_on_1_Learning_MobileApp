@@ -3,6 +3,7 @@ import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:provider/provider.dart';
 
 class TutorCardForSearch extends StatelessWidget {
@@ -27,7 +28,10 @@ class TutorCardForSearch extends StatelessWidget {
     TutorDTO? tutor = tutors.getTutor(id);
     
     return GestureDetector(
-      onTap: () {},
+      onTap: () {Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TutorDetail(id)),
+      );},
       child: Card(
         margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
         elevation: 4,

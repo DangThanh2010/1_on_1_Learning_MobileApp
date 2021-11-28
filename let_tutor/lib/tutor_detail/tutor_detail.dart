@@ -1,23 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
+import 'package:let_tutor/model/comment_dto.dart';
+import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/specialty_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/tutor_detail/booking_dialog.dart';
 import 'package:let_tutor/tutor_detail/comment.dart';
 import 'package:let_tutor/tutor_detail/icon_text.dart';
 import 'package:let_tutor/tutor_detail/intro.dart';
 import 'package:let_tutor/tutor_detail/report_dialog.dart';
+import 'package:provider/provider.dart';
 
 class TutorDetail extends StatelessWidget {
+  TutorDetail(this.id);
+  
+  final int id;
+
+  Widget titleName(String title){
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),)
+    );
+  } 
+
+  List<Widget> generateLanguageTags(List<LanguageDTO> listLanguage){
+    List<Tag> tags = [];
+    for(int j = 0; j < listLanguage.length; j++){
+      if(id == listLanguage[j].idTutor){
+        tags.add(Tag(listLanguage[j].language, true));
+      }
+    }
+    return tags;
+  }
+
+  List<Widget> generateSpecialtyTags(List<SpecialtyDTO> listSpecialty){
+    List<Tag> tags = [];
+    for(int j = 0; j < listSpecialty.length; j++){
+      if(id == listSpecialty[j].idTutor){
+        tags.add(Tag(listSpecialty[j].specialty, true));
+      }
+    }
+    return tags;
+  }
+
+  List<Widget> generateComments(List<CommentDTO> listComment){
+    List<Widget> comments = [];
+    for(int j = 0; j < listComment.length; j++){
+      if(id == listComment[j].idTutor){
+        comments.add(Comment(AssetImage('images/avatar.jpg'), 'April Corpuz', listComment[j].comment, listComment[j].dateTime.toString()));
+      }
+    }
+    return comments;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget TitleName(String title){
-      return Container(
-        margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-        child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),)
-      );
-    } 
-
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    ListCommentDTO comments = context.watch<ListCommentDTO>();
+    List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
+    List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
+    TutorDTO? tutor = tutors.getTutor(id);
+    
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -34,7 +80,7 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            Intro(AssetImage('images/avatar3.jpg'), 'Levi', 'Japan', false),
+            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, tutor.isFavourite, () { tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);}),
 
             Button('Booking', () {
               showDialog(
@@ -56,7 +102,7 @@ class TutorDetail extends StatelessWidget {
                      showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return ReportDialog('Levi'); 
+                        return ReportDialog(tutor.name); 
                       }
                     );
                   },)
@@ -67,72 +113,60 @@ class TutorDetail extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Text(
-                'I was born in Chester, United Kingdom, but now live in Japan. I am a person of varied interests, I love baking, reading, photography and languages. I enjoy teaching English to all ages and levels as I believe it opens the door to global opportunities. I am a fun, talkative person who loves to find out about others cultures and experience.'
+                tutor.introduction
               ) 
             ),
 
-            TitleName('Languages'),
+            titleName('Languages'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
               child:  SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Tag('English', true),
-                    Tag('Japanese', true),
-                    Tag('Vietnamese', true),
-                    Tag('Korean', true),
-                  ],
+                  children: generateLanguageTags(languages)
                 ),
               )
             ),
            
-            TitleName('Education'),
+            titleName('Education'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text('IELTS 8.0 (Speaking: 8.0, Listening: 8.5, Reading: 8.5, Writing: 7.5')
+              child: Text(tutor.education)
             ),
 
-            TitleName('Experience'),
+            titleName('Experience'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text('3 years')
+              child: Text(tutor.experience)
             ),
 
-            TitleName('Interests'),
+            titleName('Interests'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text('Teaching English, listening to music, shopping, eating')
+              child: Text(tutor.interests)
             ),
 
-            TitleName('Profession'),
+            titleName('Profession'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text('English teacher')
+              child: Text(tutor.profession)
             ),
 
-            TitleName('Specialties'),
+            titleName('Specialties'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
               child:  SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Tag('English for Kids', true),
-                    Tag('Conversational English', true),
-                    Tag('IELTS', true),
-                  ],
+                  children: generateSpecialtyTags(specialties)
                 ),
               )
             ),
 
-            TitleName('Rating and Comment (3)'),
-            Comment(AssetImage('images/avatar.jpg'), 'April Corpuz', 'Happy', '10:12:10, 17/10/2021'),
-            Comment(AssetImage('images/avatar2.jpg'), 'Keegan', 'Very good', '10:10:10, 16/10/2021'),
-            Comment(AssetImage('images/avatar2.jpg'), 'Keegan', 'Very nice', '11:10:10, 16/10/2021'),
-          ],
+            titleName('Rating and Comment (3)'),
+          ] + generateComments(comments.list),
         ),
       )
     );
