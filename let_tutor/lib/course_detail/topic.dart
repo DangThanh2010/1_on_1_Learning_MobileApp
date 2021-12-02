@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/topic_dto.dart';
 
 class Topic extends StatelessWidget {
-  Topic(this.number, this.name);
+  Topic(this.number, this.topic);
 
   final int number;
-  final String name;
+  final TopicDTO topic;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class Topic extends StatelessWidget {
               child: Center(child: Text('${number}', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),),
             ),
 
-            Text(name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
+            Text(topic.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),)
           ],
         ),
       )

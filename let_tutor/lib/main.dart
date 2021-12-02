@@ -12,10 +12,12 @@ import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/home/home.dart';
 import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
+import 'package:let_tutor/model/course_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
+import 'package:let_tutor/model/topic_dto.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
 import 'package:let_tutor/settings/settings.dart';
@@ -34,6 +36,8 @@ class App extends StatelessWidget{
   final ListCommentDTO listComment = listCommentDTO;
   final List<LanguageDTO> listLanguage = listLanguageDTO;
   final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
+  final List<CourseDTO> listCourse = listCourseDTO;
+  final List<TopicDTO> listTopic = listTopicDTO;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,8 @@ class App extends StatelessWidget{
         ChangeNotifierProvider(create: (context) => listComment),
         Provider(create: (context) => listLanguage),
         Provider(create: (context) => listSpecialty),
+        Provider(create: (context) => listCourse),
+        Provider(create: (context) => listTopic),
       ],
       child: MaterialApp(
         title: "Let Tutor",
