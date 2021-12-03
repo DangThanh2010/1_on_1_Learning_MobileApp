@@ -1,11 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/booking_dto.dart';
+import 'package:let_tutor/model/list_booking_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/session_history/session_history_card.dart';
+import 'package:provider/provider.dart';
 
-class SessionHistory extends StatelessWidget {
+class SessionHistory extends StatefulWidget {
+  @override
+  _SessionHistoryState createState() => _SessionHistoryState();
+}
+
+class _SessionHistoryState extends State<SessionHistory>{
+
+  String searchValue = "";
+
+  List<BookingDTO> getListSession(ListBookingDTO bookings){
+    List<BookingDTO> result = [];
+    for(int i = 0; i < bookings.list.length; i++){
+      if(bookings.list[i].end.compareTo(DateTime.now()) < 0 && bookings.list[i].isCancel == false){
+        result.add(bookings.list[i]);
+      }
+    }
+    return result;
+  }
+
+  List<BookingDTO> getListSessionForSearch(ListBookingDTO bookings, ListTutorDTO tutors, String search){
+    List<BookingDTO> result = [];
+    for(int i = 0; i < bookings.list.length; i++){
+      TutorDTO? tutor = tutors.getTutor(bookings.list[i].idTutor);
+
+      if(bookings.list[i].end.compareTo(DateTime.now()) < 0 && bookings.list[i].isCancel == false
+        && tutor!.name.toLowerCase().contains(search.toLowerCase())){
+        result.add(bookings.list[i]);
+      }
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
+    ListBookingDTO bookings = context.watch<ListBookingDTO>();
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(
@@ -21,55 +59,23 @@ class SessionHistory extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: CupertinoSearchTextField(
-                onChanged: (String value) {},
-                onSubmitted: (String value) {},
+                onChanged: (String value) {
+                  setState(() {
+                    searchValue = value;
+                  });
+                },
+                onSubmitted: (String value) {
+                  setState(() {
+                    searchValue = value;
+                  });
+                },
                 placeholder: 'Search session history',
               )
             ),
   
             Expanded(
               child: ListView(
-                children: [
-                  SessionHistoryCard(
-                    AssetImage('images/avatar.jpg'),
-                    'April Corpuz',
-                    DateTime(2021, 10, 18, 22, 0, 0, 0, 0),
-                    false,
-                    '00:25:11'
-                  ),
-
-                  SessionHistoryCard(
-                    AssetImage('images/avatar.jpg'),
-                    'April Corpuz',
-                    DateTime(2021, 10, 18, 11, 5, 0, 0, 0),
-                    false,
-                    '00:30:01'
-                  ),
-
-                  SessionHistoryCard(
-                    AssetImage('images/avatar.jpg'),
-                    'April Corpuz',
-                    DateTime(2021, 10, 17, 22, 0, 0, 0, 0),
-                    false,
-                    '00:25:11'
-                  ),
-
-                  SessionHistoryCard(
-                    AssetImage('images/avatar.jpg'),
-                    'April Corpuz',
-                    DateTime(2021, 10, 17, 9, 0, 0, 0, 0),
-                    false,
-                    '00:29:56'
-                  ),
-
-                  SessionHistoryCard(
-                    AssetImage('images/avatar.jpg'),
-                    'April Corpuz',
-                    DateTime(2021, 10, 16, 13, 40, 0, 0, 0),
-                    false,
-                    '00:20:09'
-                  ),
-                ],
+                children: searchValue == "" ? getListSession(bookings).map((e) => SessionHistoryCard(e)).toList() : getListSessionForSearch(bookings, tutors, searchValue).map((e) => SessionHistoryCard(e)).toList()
               )
             ),
           ]

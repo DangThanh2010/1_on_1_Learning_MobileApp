@@ -55,5 +55,5 @@ List<FeedbackDTO> listFeedbackDTO = [FeedbackDTO(1, 2, 5, 'Thank you for booking
                                     ];
 
 ListBookingDTO listBookingDTO = ListBookingDTO([BookingDTO(1, 1, DateTime(2021, 11, 28, 8, 0, 0, 0, 0), DateTime(2021, 11, 28, 8, 25, 0, 0, 0), false, false),
-                                              BookingDTO(2, 2, DateTime(2021, 11, 29, 8, 0, 0, 0, 0), DateTime(2021, 11, 28, 8, 30, 0, 0, 0), false, false),
+                                              BookingDTO(2, 2, DateTime(2021, 11, 29, 8, 0, 0, 0, 0), DateTime(2021, 11, 29, 8, 30, 0, 0, 0), false, false),
                                               BookingDTO(3, 3, DateTime(2021, 11, 30, 11, 0, 0, 0, 0), DateTime(2021, 11, 30, 11, 25, 0, 0, 0), false, false),]);

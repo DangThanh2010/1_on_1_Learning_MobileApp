@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/booking_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/session_history/give_feedback_dialog.dart';
+import 'package:let_tutor/tutor_detail/tutor_detail.dart';
+import 'package:provider/provider.dart';
 
 class SessionHistoryCard extends StatelessWidget {
-  SessionHistoryCard(this.avatar, this.name, this.start, this.isFeedbacked, this.timeToLearn);
+  SessionHistoryCard(this.booking);
 
-  final ImageProvider avatar;
-  final String name;
-  final DateTime start;
-  final bool isFeedbacked;
-  final String timeToLearn;
+  final BookingDTO booking;
+
+  String getTimeToLearn(DateTime start, DateTime end){
+    int seconds = end.difference(start).inSeconds;
+    int second = seconds % 60;
+    int minute = (seconds ~/ 60) % 60;
+    int hour = (seconds ~/ 60) ~/ 60;
+
+    String result = (hour < 10 ? ('0' + hour.toString()) : hour.toString()) + ':' + (minute < 10 ? ('0' + minute.toString()) : minute.toString()) + ':' + (second < 10 ? ('0' + second.toString()) : second.toString());
+
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    TutorDTO? tutor = tutors.getTutor(booking.idTutor);
 
     return Card(
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
@@ -28,7 +42,7 @@ class SessionHistoryCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: avatar,
+                    image: AssetImage(tutor!.avatar),
                   )
                 ),
               ),
@@ -37,34 +51,34 @@ class SessionHistoryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                    Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
 
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined),
+                        const Icon(Icons.calendar_today_outlined),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text((start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()) + ':' + (start.second < 10 ? ('0' + start.second.toString()) : start.second.toString()) + ', ' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString()) + '/' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '/' + start.year.toString()),
+                          child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString()),
                         )
                       ]
                     ),
 
                     Row(
                       children: [
-                        Icon(Icons.schedule_outlined),
+                        const Icon(Icons.schedule_outlined),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text(timeToLearn),
+                          child: Text(getTimeToLearn(booking.start, booking.end)),
                         )
                       ]
                     ),
 
                     Row(
                       children: [
-                        Icon(Icons.star_outline),
+                        const Icon(Icons.star_outline),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text(isFeedbacked ? 'You feedbacked this session' : 'Not feedback yet'),
+                          child: Text(booking.isFeedbacked ? 'You feedbacked this session' : 'Not feedback yet'),
                         )
                       ]
                     ),
@@ -82,7 +96,8 @@ class SessionHistoryCard extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return GiveFeedbackDialog(name);              }
+                        return GiveFeedbackDialog(tutor.name);              
+                      }
                     );
                   },
                   child: Container(
@@ -104,7 +119,10 @@ class SessionHistoryCard extends StatelessWidget {
 
               Expanded(
                 child:  GestureDetector(
-                  onTap: () {},
+                  onTap: () {Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(tutor.id))),
+                  );},
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
                     alignment: Alignment.center,
