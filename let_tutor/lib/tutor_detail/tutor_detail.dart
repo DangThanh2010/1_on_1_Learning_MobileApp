@@ -165,7 +165,7 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            titleName('Rating and Comment (3)'),
+            titleName('Rating and Comment (${comments.getLengthForTutor(tutor.id)})'),
           ] + generateComments(comments.list),
         ),
       )
