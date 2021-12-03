@@ -13,7 +13,9 @@ import 'package:let_tutor/home/home.dart';
 import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
 import 'package:let_tutor/model/course_dto.dart';
+import 'package:let_tutor/model/feedback_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
@@ -34,21 +36,26 @@ void main() {
 class App extends StatelessWidget{
   final ListTutorDTO listTutor = listTutorDTO;
   final ListCommentDTO listComment = listCommentDTO;
+  final ListBookingDTO listBooking = listBookingDTO;
   final List<LanguageDTO> listLanguage = listLanguageDTO;
   final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
   final List<CourseDTO> listCourse = listCourseDTO;
   final List<TopicDTO> listTopic = listTopicDTO;
+  final List<FeedbackDTO> listFeedback = listFeedbackDTO;
 
   @override
   Widget build(BuildContext context) {
+    listBooking.list.sort((a, b) => a.start.compareTo(b.start));
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => listTutor),
         ChangeNotifierProvider(create: (context) => listComment),
+        ChangeNotifierProvider(create: (context) => listBooking),
         Provider(create: (context) => listLanguage),
         Provider(create: (context) => listSpecialty),
         Provider(create: (context) => listCourse),
         Provider(create: (context) => listTopic),
+        Provider(create: (context) => listFeedback),
       ],
       child: MaterialApp(
         title: "Let Tutor",

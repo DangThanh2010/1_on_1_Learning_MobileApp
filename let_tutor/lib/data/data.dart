@@ -1,6 +1,9 @@
+import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/comment_dto.dart';
 import 'package:let_tutor/model/course_dto.dart';
+import 'package:let_tutor/model/feedback_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
@@ -46,3 +49,11 @@ List<TopicDTO> listTopicDTO = [TopicDTO(1, 1, 'Foods You Love'), TopicDTO(2, 1, 
                                 TopicDTO(13, 2, 'Drink Up'), TopicDTO(14, 2, 'Getting Some Zizz'), 
                                 TopicDTO(15, 2, 'Calm and RnB'), TopicDTO(16, 2, 'Look On The Bright Side'),
                                 ];
+
+List<FeedbackDTO> listFeedbackDTO = [FeedbackDTO(1, 2, 5, 'Thank you for booking my class. I hope to see you again soon. Keep learning the language.', DateTime(2021, 11, 29, 8, 30, 2, 0, 0),),
+                                    FeedbackDTO(2, 3, 5, 'Thank you for booking my class. I hope to see you again soon.', DateTime(2021, 11, 30, 11, 30, 0, 0, 0),),
+                                    ];
+
+ListBookingDTO listBookingDTO = ListBookingDTO([BookingDTO(1, 1, DateTime(2021, 11, 28, 8, 0, 0, 0, 0), DateTime(2021, 11, 28, 8, 25, 0, 0, 0), false, false),
+                                              BookingDTO(2, 2, DateTime(2021, 11, 29, 8, 0, 0, 0, 0), DateTime(2021, 11, 28, 8, 30, 0, 0, 0), false, false),
+                                              BookingDTO(3, 3, DateTime(2021, 11, 30, 11, 0, 0, 0, 0), DateTime(2021, 11, 30, 11, 25, 0, 0, 0), false, false),]);

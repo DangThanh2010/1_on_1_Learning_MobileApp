@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/booking_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:provider/provider.dart';
 
 class BookingHistoryCard extends StatelessWidget {
-  BookingHistoryCard(this.avatar, this.name, this.start, this.end);
+  BookingHistoryCard(this.booking);
 
-  final ImageProvider avatar;
-  final String name;
-  final DateTime start;
-  final DateTime end;
+  final BookingDTO booking;
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    TutorDTO? tutor = tutors.getTutor(booking.idTutor);
 
     return Card(
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
@@ -24,7 +27,7 @@ class BookingHistoryCard extends StatelessWidget {
               shape: BoxShape.circle,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: avatar,
+                image: AssetImage(tutor!.avatar),
               )
             ),
           ),
@@ -33,14 +36,14 @@ class BookingHistoryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
                 Row(
                   children: [ 
-                    Text(start.year.toString() + '-' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '-' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString())),
+                    Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString())),
                     Container(
                       padding: const EdgeInsets.all(5),
                       margin: const EdgeInsets.only(left: 5, right: 5),
-                      child: Text((start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()), style: const TextStyle(color: Colors.blue),),
+                      child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()), style: const TextStyle(color: Colors.blue),),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(10)
@@ -52,7 +55,7 @@ class BookingHistoryCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(5),
                       margin: const EdgeInsets.only(left: 5,right: 5),
-                      child: Text((end.hour < 10 ? ('0' + end.hour.toString()) : end.hour.toString()) + ':' + (end.minute < 10 ? ('0' + end.minute.toString()) : end.minute.toString()), style: const TextStyle(color: Colors.red),),
+                      child: Text((booking.end.hour < 10 ? ('0' + booking.end.hour.toString()) : booking.end.hour.toString()) + ':' + (booking.end.minute < 10 ? ('0' + booking.end.minute.toString()) : booking.end.minute.toString()), style: const TextStyle(color: Colors.red),),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
                         borderRadius: BorderRadius.circular(10)

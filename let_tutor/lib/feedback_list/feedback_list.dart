@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/feedback_list/feedback_list_card.dart';
+import 'package:let_tutor/model/feedback_dto.dart';
+import 'package:provider/provider.dart';
 
 class FeedbackList extends StatelessWidget {
 
+  int getStar(List<FeedbackDTO> feedbacks){
+    double result = 0;
+    for(int i = 0; i < feedbacks.length; i++){
+      result += feedbacks[i].star;
+    }
+    return (result / feedbacks.length).round();
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<FeedbackDTO> feedbacks = context.watch<List<FeedbackDTO>>();
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(
@@ -16,49 +28,18 @@ class FeedbackList extends StatelessWidget {
       body: Container(
         color: Colors.white,
         child: ListView(
-          children: [
-
+          children: <Widget>[
             Container(
               margin: const EdgeInsets.only(top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('5.0', style: TextStyle(fontSize: 30, color: Colors.red),),
-                  Icon(Icons.star_rate, color: Colors.yellow, size: 30,)
+                  Text('${getStar(feedbacks)}', style: const TextStyle(fontSize: 30, color: Colors.red),),
+                  const Icon(Icons.star_rate, color: Colors.yellow, size: 30,)
                 ],
               )
             ),
-            
-            FeedbackListCard(
-              AssetImage('images/avatar.jpg'),
-              'April Corpuz',
-              DateTime(2021, 10, 21, 8, 0, 0, 0, 0),
-              'Thank you for booking my class. I hope to see you again soon. Keep learning the language.',
-            ),
-
-            FeedbackListCard(
-              AssetImage('images/avatar.jpg'),
-              'April Corpuz',
-              DateTime(2021, 10, 19, 8, 30, 2, 0, 0),
-              'Thank you for booking my class. I hope to see you again soon. Keep learning the language.',
-            ),
-
-            FeedbackListCard(
-              AssetImage('images/avatar.jpg'),
-              'April Corpuz',
-              DateTime(2021, 10, 18, 11, 24, 30, 0, 0),
-              'Thank you for booking my class. I hope to see you again soon. Keep learning the language.',
-            ),
-
-            FeedbackListCard(
-              AssetImage('images/avatar.jpg'),
-              'April Corpuz',
-              DateTime(2021, 10, 18, 8, 40, 8, 0, 0),
-              'Thank you for booking my class. I hope to see you again soon. Keep learning the language.',
-            ),
-
-
-          ],
+          ] + feedbacks.map((e) => FeedbackListCard(e)).toList(),
         ),
       )
     );

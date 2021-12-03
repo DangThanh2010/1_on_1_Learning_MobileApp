@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/feedback_dto.dart';
+import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:provider/provider.dart';
 
 class FeedbackListCard extends StatelessWidget {
-  FeedbackListCard(this.avatar, this.name, this.feedbackDateTime, this.comment);
+  FeedbackListCard(this.feedback);
 
-  final ImageProvider avatar;
-  final String name;
-  final DateTime feedbackDateTime;
-  final String comment;
+  final FeedbackDTO feedback;
 
   @override
   Widget build(BuildContext context) {
+    ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    TutorDTO? tutor = tutors.getTutor(feedback.idSender);
+
     return Card(
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
       elevation: 4,
@@ -25,7 +29,7 @@ class FeedbackListCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: avatar,
+                    image: AssetImage(tutor!.avatar),
                   )
                 ),
               ),
@@ -34,11 +38,11 @@ class FeedbackListCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold),),
                     Row(
                       children: [
-                        Text((feedbackDateTime.hour < 10 ? ('0' + feedbackDateTime.hour.toString()) : feedbackDateTime.hour.toString()) + ':' + (feedbackDateTime.minute < 10 ? ('0' + feedbackDateTime.minute.toString()) : feedbackDateTime.minute.toString()) + ':' + (feedbackDateTime.second < 10 ? ('0' + feedbackDateTime.second.toString()) : feedbackDateTime.second.toString()) + ', ' + (feedbackDateTime.day < 10 ? ('0' + feedbackDateTime.day.toString()) : feedbackDateTime.day.toString()) + '/' + (feedbackDateTime.month < 10 ? ('0' + feedbackDateTime.month.toString()) : feedbackDateTime.month.toString()) + '/' + feedbackDateTime.year.toString(),
-                              style: TextStyle(color: Colors.red),),
+                        Text((feedback.dateTime.hour < 10 ? ('0' + feedback.dateTime.hour.toString()) : feedback.dateTime.hour.toString()) + ':' + (feedback.dateTime.minute < 10 ? ('0' + feedback.dateTime.minute.toString()) : feedback.dateTime.minute.toString()) + ':' + (feedback.dateTime.second < 10 ? ('0' + feedback.dateTime.second.toString()) : feedback.dateTime.second.toString()) + ', ' + (feedback.dateTime.day < 10 ? ('0' + feedback.dateTime.day.toString()) : feedback.dateTime.day.toString()) + '/' + (feedback.dateTime.month < 10 ? ('0' + feedback.dateTime.month.toString()) : feedback.dateTime.month.toString()) + '/' + feedback.dateTime.year.toString(),
+                              style: const TextStyle(color: Colors.red),),
                         Expanded(
                           child: 
                           Container (
@@ -46,8 +50,8 @@ class FeedbackListCard extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text('5.0', style: TextStyle(color: Colors.red),),
-                                Icon(Icons.star_rate, color: Colors.yellow,),    
+                                Text('${feedback.star}', style: const TextStyle(color: Colors.red),),
+                                const Icon(Icons.star_rate, color: Colors.yellow,),    
                               ],
                             )
                           )
@@ -65,7 +69,7 @@ class FeedbackListCard extends StatelessWidget {
             padding: const EdgeInsets.all(5),
             alignment: Alignment.topLeft,
             child: Text(
-              comment,
+              feedback.comment,
               maxLines: null,
             ),
 
