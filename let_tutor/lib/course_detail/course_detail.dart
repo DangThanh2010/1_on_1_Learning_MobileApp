@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/course_detail/topic.dart';
 import 'package:let_tutor/model/course_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/topic_dto.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +10,10 @@ class CourseDetail extends StatelessWidget {
 
   final CourseDTO course;
 
-  Widget partName(String name){
+  Widget partName(String name, Setting setting){
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      child: Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),)
+      margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),)
     );
   } 
 
@@ -30,12 +31,12 @@ class CourseDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     List<TopicDTO> topics = context.watch<List<TopicDTO>>();
+    Setting setting = context.watch<Setting>();
 
     return Scaffold(
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             Container(
@@ -49,57 +50,57 @@ class CourseDetail extends StatelessWidget {
               ),
             ),
 
-            partName('About Course'),
+            partName(setting.language == "English" ? 'About Course' : "Thông tin khóa học", setting),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Text(
-                course.about
+                course.about,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
               ) 
             ),
 
-            partName('Overview'),
+            partName(setting.language == "English" ? 'Overview' : "Tổng quan", setting),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline),
-                  Text('Why take this course?'), 
+                  Icon(Icons.info_outline, color: setting.theme == "White" ? Colors.black : Colors.white,),
+                  Text(setting.language == "English" ? 'Why take this course?' : "Tại sao nên tham gia khóa học này?", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)), 
                 ],
               )
             ),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-              child: Text(course.overview1)
+              child: Text(course.overview1, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline),
-                  Text('What will you be able to do?'), 
+                  Icon(Icons.info_outline, color: setting.theme == "White" ? Colors.black : Colors.white,),
+                  Text(setting.language == "English" ? 'What will you be able to do?' : "Bạn sẽ nhận được gì?", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)), 
                 ],
               )
             ),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-              child: Text(course.overview2)
+              child: Text(course.overview2, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            partName('Experience Level'),
+            partName(setting.language == "English" ? 'Experience Level' : "Mức độ kinh ngiệm", setting),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-              child: Text(course.level) 
+              child: Text(course.level, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)) 
             ),
 
-            partName('Course Length'),
+            partName(setting.language == "English" ? 'Course Length' : "Độ dài khóa học", setting),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-              child: Text('${course.length} Topics') 
+              child: Text(setting.language == "English" ? '${course.length} Topics' : '${course.length} chủ đề', style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)) 
             ),
 
-            partName('List Topics'),
-
+            partName(setting.language == "English" ? 'List Topics' : "Danh sách chủ đề", setting),
           ]
           + 
           generateListTopic(course.id, topics)

@@ -4,26 +4,30 @@ import 'package:let_tutor/global_widget/check_box.dart';
 import 'package:let_tutor/global_widget/date_input.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 
 class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Profile', style: TextStyle(color: Colors.black),), 
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Profile' : "Hồ sơ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             Center(
-              child: Container(
+              child: SizedBox(
                 height: 90,
                 width: 90,
                 child: Stack(
@@ -33,7 +37,7 @@ class Profile extends StatelessWidget {
                         margin: const EdgeInsets.all(10),
                         width: 70,
                         height: 70,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
@@ -49,14 +53,14 @@ class Profile extends StatelessWidget {
                       child: Container(
                         height: 30,
                         width: 30,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.grey,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           iconSize: 15,
                           onPressed: () {},
-                          icon: Icon(Icons.camera_alt, color: Colors.white,)
+                          icon: const Icon(Icons.camera_alt, color: Colors.white,)
                         )
                       )
                     )
@@ -68,22 +72,22 @@ class Profile extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(bottom: 10),
               child: Center(
-                child: Text('April Corpuz', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.grey),),
+                child: Text('April Corpuz', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: setting.theme == "White" ? Colors.grey : Colors.white),),
               ),
             ),
 
             Container(
               margin: const EdgeInsets.only(bottom: 10),
               child: Center(
-                child: Text('AprilCorpuz@gmail.com', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.grey),),
+                child: Text('AprilCorpuz@gmail.com', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: setting.theme == "White" ? Colors.grey : Colors.white),),
               ),
             ),
 
-            TextInput('Full name', 'Full name', false, TextInputType.text, (String value){}),
-            DateInput('Birthday', 'Birthday', false, (String value){}),
-            TextInput('Phone number', 'Phone number', false, TextInputType.number, (String value){}),
-            SelectedInput('Country', 'Country', (String value){}, ['Vietnam', 'Japan', 'Korean', 'Thailand']),
-            SelectedInput('My level', 'My level', (String value){}, ['Beginner', 'Intermediate', 'Advanced']),
+            TextInput(setting.language == "English" ? 'Full name' : 'Họ tên', setting.language == "English" ? 'Full name' : 'Họ tên', false, TextInputType.text, (String value){}),
+            DateInput(setting.language == "English" ? 'Birthday' : 'Ngày sinh', setting.language == "English" ? 'Birthday' : 'Ngày sinh', false, (String value){}),
+            TextInput(setting.language == "English" ? 'Phone number' : 'Số điện thoại', setting.language == "English" ? 'Phone number' : 'Số điện thoại', false, TextInputType.number, (String value){}),
+            SelectedInput(setting.language == "English" ? 'Country' : 'Quốc gia', setting.language == "English" ? 'Country' : 'Quốc gia', (String value){}, ['Vietnam', 'Japan', 'Korean', 'Thailand']),
+            SelectedInput(setting.language == "English" ? 'My level' : 'Trình độ', setting.language == "English" ? 'My level' : 'Trình độ', (String value){}, ['Beginner', 'Intermediate', 'Advanced']),
 
             Container(
               margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -94,8 +98,8 @@ class Profile extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'Want to learn',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      setting.language == "English" ? 'Want to learn' : 'Muốn học',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),
                     )
                   ),
                   CheckBox('English for Kids', (String title){}, (String title){}),
@@ -112,7 +116,7 @@ class Profile extends StatelessWidget {
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button('Save', () { Navigator.pop(context);}),
+              child: Button(setting.language == "English" ? 'Save' : 'Lưu', () { Navigator.pop(context);}),
             )
           ],
         ),

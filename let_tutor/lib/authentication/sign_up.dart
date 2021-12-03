@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -15,9 +17,9 @@ class _SignUpState extends State<SignUp>{
   String password = "";
   String confirmPassword = "";
 
-  bool validateEmail(String Email){
-    for(int i = 0; i < Email.length; i++){
-      if(Email[i] == '@'){
+  bool validateEmail(String email){
+    for(int i = 0; i < email.length; i++){
+      if(email[i] == '@'){
         return true;
       }
     }
@@ -45,43 +47,44 @@ class _SignUpState extends State<SignUp>{
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Sign up', style: TextStyle(color: Colors.black),), 
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Sign up' : "Đăng ký", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
-            TextInput('Full name', 'Name', false, TextInputType.text, (String value) { setState(() {
+            TextInput(setting.language == "English" ? 'Full name' : "Họ tên", setting.language == "English" ? 'Full name' : "Họ tên", false, TextInputType.text, (String value) { setState(() {
               name = value;
             });}),
             TextInput('Email', 'example@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });}),
-            TextInput('Password', '******', true, TextInputType.text, (String value){ setState(() {
+            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", '******', true, TextInputType.text, (String value){ setState(() {
               password = value;
             });}),
-            TextInput('Confirm password', '******', true, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? 'Confirm password' : "Nhập lại mật khẩu", '******', true, TextInputType.text, (String value){setState(() {
               confirmPassword = value;
             });}),
             
-            Button('Sign up', handleSignUp),
+            Button(setting.language == "English" ? "Sign up" : "Đăng ký", handleSignUp),
             SocialSignin(),
 
             Row(
               mainAxisAlignment : MainAxisAlignment.center,
               children: [
-                const Text('Already have an account? '), 
+                Text(setting.language == "English" ? "Already have an account? " : "Bạn đã có tài khoản? ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),), 
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Sign in')
+                  child: Text(setting.language == "English" ? "Sign in" : "Đăng nhập")
                 )
               ]
             ),

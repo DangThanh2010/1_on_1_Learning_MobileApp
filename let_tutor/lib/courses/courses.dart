@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:let_tutor/course_detail/course_detail.dart';
 import 'package:let_tutor/courses/course_card.dart';
 import 'package:let_tutor/model/course_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
 
 class Courses extends StatefulWidget {
@@ -16,14 +16,15 @@ class _CoursesState extends State<Courses>{
   @override
   Widget build(BuildContext context) {
     List<CourseDTO> courses = context.watch<List<CourseDTO>>();
+    Setting setting = context.watch<Setting>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Courses', style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Courses' : "Khóa học", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: Column(
           children: [
             Container(
@@ -39,7 +40,11 @@ class _CoursesState extends State<Courses>{
                   searchValue = value;
                   });
                 },
-                placeholder: 'Search course',
+                backgroundColor: setting.theme == "White" ? Colors.grey[200] : Colors.grey,
+                itemColor: setting.theme == "White" ? Colors.black : Colors.white,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
+                placeholder: setting.language == "English" ? 'Search course' : "Tìm kiếm khóa học",
+                placeholderStyle: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               )
             ),
   

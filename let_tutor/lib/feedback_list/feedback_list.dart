@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/feedback_list/feedback_list_card.dart';
 import 'package:let_tutor/model/feedback_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
 
 class FeedbackList extends StatelessWidget {
@@ -16,17 +17,18 @@ class FeedbackList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<FeedbackDTO> feedbacks = context.watch<List<FeedbackDTO>>();
-
+    Setting setting = context.watch<Setting>();
+    
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Feedback List', style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Feedback List' : "Danh sách đánh giá", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: <Widget>[
             Container(

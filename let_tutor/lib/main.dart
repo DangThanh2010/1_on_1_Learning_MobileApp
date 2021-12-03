@@ -18,6 +18,7 @@ import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/topic_dto.dart';
 import 'package:let_tutor/profile/profile.dart';
@@ -28,6 +29,7 @@ import 'package:let_tutor/tutors/tutors.dart';
 import 'package:let_tutor/upcoming/upcoming.dart';
 import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(App());
@@ -42,15 +44,24 @@ class App extends StatelessWidget{
   final List<CourseDTO> listCourse = listCourseDTO;
   final List<TopicDTO> listTopic = listTopicDTO;
   final List<FeedbackDTO> listFeedback = listFeedbackDTO;
+  
 
   @override
   Widget build(BuildContext context) {
     listBooking.list.sort((a, b) => a.start.compareTo(b.start));
+
+    Setting setting = Setting("English", "White");
+    SharedPreferences.getInstance().then((prefs){
+      setting.language = prefs.getString('language') ?? "English";
+      setting.theme = prefs.getString('theme') ?? "White";
+    });
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => listTutor),
         ChangeNotifierProvider(create: (context) => listComment),
         ChangeNotifierProvider(create: (context) => listBooking),
+        ChangeNotifierProvider(create: (context) => setting),
         Provider(create: (context) => listLanguage),
         Provider(create: (context) => listSpecialty),
         Provider(create: (context) => listCourse),
@@ -69,7 +80,7 @@ class App extends StatelessWidget{
           "/feedback_list": (context) => SafeArea(child: FeedbackList()),
           "/booking_history": (context) => SafeArea(child: BookingHistory()),
           "/session_history": (context) => SafeArea(child: SessionHistory()),
-          "/advanced_settings": (context) => SafeArea(child: AdvancedSettings("English")),
+          "/advanced_settings": (context) => SafeArea(child: AdvancedSettings()),
         },
         home: SafeArea(
           child: MyApp(),
@@ -123,56 +134,63 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Widget displayScreen() {
+  Widget displayScreen(Setting setting) {
     if(!isLogin){
       return SignIn(setLoginStatus);
     }
     else {
       return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Message',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: 'Upcoming',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Tutor',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Course',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: Colors.blue,
-        showUnselectedLabels: true,
-        unselectedItemColor: Colors.grey,
-        unselectedLabelStyle: const TextStyle(color: Colors.grey),
-        onTap: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-      ),
-      body: displayScreenWhenLoggedIn(),
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home),
+              label: setting.language == "English" ? 'Home' : "Trang chủ",
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.message),
+              label: setting.language == "English" ? 'Message' : "Tin nhắn",
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.access_time),
+              label: setting.language == "English" ? 'Upcoming' : "Sắp diễn ra",
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.people),
+              label: 'Tutor',
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.book),
+              label: setting.language == "English" ? 'Course' : "Khóa học",
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.settings),
+              label: setting.language == "English" ? 'Settings' : "Cài đặt",
+              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
+            ),
+          ],
+          currentIndex: selectedIndex,
+          selectedItemColor: Colors.blue,
+          showUnselectedLabels: true,
+          unselectedItemColor: setting.theme == "White" ? Colors.grey : Colors.white,
+          unselectedLabelStyle: TextStyle(color: setting.theme == "White" ? Colors.grey : Colors.white),
+          onTap: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+        ),
+        body: displayScreenWhenLoggedIn(),
       );
     }
   }
   @override
   Widget build(BuildContext context) {
-    return displayScreen();
+    Setting setting = context.watch<Setting>();
+    return displayScreen(setting);
   }
 }

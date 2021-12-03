@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:provider/provider.dart';
 
@@ -15,9 +16,11 @@ class UpcomingCard extends StatelessWidget {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     TutorDTO? tutor = tutors.getTutor(booking.idTutor);
     ListBookingDTO bookings = context.watch<ListBookingDTO>();
+    Setting setting = context.watch<Setting>();
     int hourDifference = booking.start.difference(DateTime.now()).inHours;
 
     return Card(
+      color: setting.theme == "White" ? Colors.white : Colors.grey[800],
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
       elevation: 4,
       child: Column(
@@ -41,10 +44,11 @@ class UpcomingCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                     Row(
                       children: [ 
-                        Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString())),
+                        Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()),
+                            style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),
                         Container(
                           padding: const EdgeInsets.all(5),
                           margin: const EdgeInsets.only(left: 5, right: 5),
@@ -88,7 +92,7 @@ class UpcomingCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Text (
-                      'Cancel',
+                      setting.language == "English" ? 'Cancel' : "Hủy",
                       style: TextStyle(fontWeight: FontWeight.bold, color: hourDifference >= 2 ? Colors.black : Colors.white),
                     ),
                   ),
@@ -107,8 +111,8 @@ class UpcomingCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Text (
-                      'Go to Meeting',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                      setting.language == "English" ? 'Go to Meeting' : "Vào lớp",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 )

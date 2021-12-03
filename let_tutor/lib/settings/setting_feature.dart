@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class SettingFeature extends StatelessWidget {
   SettingFeature(this.leading, this.title, this.trailing, this.callBack);
@@ -10,10 +12,12 @@ class SettingFeature extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
     return Container(
       margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         borderRadius: BorderRadius.circular(60),
         boxShadow: [
           BoxShadow(
@@ -25,7 +29,7 @@ class SettingFeature extends StatelessWidget {
       ),
       child: ListTile(
         leading: leading,
-        title: Text(title),
+        title: Text(title, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),
         trailing: trailing,
         onTap: callBack,
       )

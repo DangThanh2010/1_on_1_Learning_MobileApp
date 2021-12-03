@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 
 class AccountInfo extends StatelessWidget {
@@ -10,6 +12,8 @@ class AccountInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+    
     return GestureDetector(
       onTap: () {Navigator.pushNamed(context, "/profile"); },
       child: Container(
@@ -32,8 +36,8 @@ class AccountInfo extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-                Text(email,),   
+                Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: setting.theme == "White" ? Colors.black : Colors.white),),
+                Text(email, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),   
               ],
             ),
           ]

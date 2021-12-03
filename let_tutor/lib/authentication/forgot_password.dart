@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPassword extends StatefulWidget{
   @override
@@ -10,9 +12,9 @@ class ForgotPassword extends StatefulWidget{
 class _ForgotPasswordState extends State<ForgotPassword>{
   String email= "";
 
-  bool validateEmail(String Email){
-    for(int i = 0; i < Email.length; i++){
-      if(Email[i] == '@'){
+  bool validateEmail(String email){
+    for(int i = 0; i < email.length; i++){
+      if(email[i] == '@'){
         return true;
       }
     }
@@ -38,16 +40,17 @@ class _ForgotPasswordState extends State<ForgotPassword>{
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Forgot password', style: TextStyle(color: Colors.black),), 
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Forgot password' : "Quên mật khẩu", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             Container(
@@ -59,9 +62,10 @@ class _ForgotPasswordState extends State<ForgotPassword>{
             Container(
               height: 180,
               margin: const EdgeInsets.only(top: 10, bottom: 10, left: 30, right: 30),
-              child: const Center(
+              child: Center(
                 child: Text(
-                  "Enter your email address and we'll send you a link to reset your password",
+                  setting.language == "English" ? "Enter your email address and we'll send you a link to reset your password" : "Nhập địa chỉ email của bạn. Chúng tôi sẽ gửi cho bạn một đường link để đặt lại mật khẩu.",
+                  style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                   textAlign: TextAlign.center,
                 ),
               )
@@ -90,15 +94,18 @@ class _ForgotPasswordState extends State<ForgotPassword>{
                       }),
                       obscureText: false,
                       textAlignVertical: TextAlignVertical.center,
+                      style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                       decoration: InputDecoration(
-                        hintText: 'Enter your email',
+                       
+                        hintText: setting.language == "English" ? 'Enter your email' : "Nhập địa chỉ email",
+                        hintStyle: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                       ),
                     )
                   ),
                 ],
               ) 
             ),
-            Button('Send', handleForgotPassword),
+            Button(setting.language == "English" ? 'Send' : "Gửi", handleForgotPassword),
           ],
         ),
       )

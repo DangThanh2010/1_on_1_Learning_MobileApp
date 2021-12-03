@@ -5,6 +5,8 @@ import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/date_input.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class BecomeATutor extends StatefulWidget {
   @override
@@ -26,19 +28,20 @@ class _BecomeATutorState extends State<BecomeATutor>{
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Become a tutor', style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Become a tutor' : "Trở thành gia sư", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
-            PartName('Basic info'),
+            PartName(setting.language == "English" ? 'Basic info' : "Thông tin cơ bản"),
 
             GestureDetector(
               onTap: () {},
@@ -50,58 +53,59 @@ class _BecomeATutorState extends State<BecomeATutor>{
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.blue)
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Upload avatar here...',
+                      setting.language == "English" ? 'Upload avatar here...' : "Đăng tải ảnh ở đây...",
                       textAlign: TextAlign.center,
+                      style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                     )
                   ),
                 )
               )
             ),
               
-            TextInput("Tutor's name", "Tutor's name", false, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? "Tutor's name" : "Họ tên", setting.language == "English" ? "Tutor's name" : "Họ tên", false, TextInputType.text, (String value){setState(() {
               name = value;
             });}),
-            SelectedInput("I'm from", 'Country', (String value){ setState(() {
+            SelectedInput(setting.language == "English" ? "I'm from" : "Tôi đến từ", setting.language == "English" ? "Country" : "Quốc gia", (String value){ setState(() {
               country = value;
             });},['Vietnam', 'Japan', 'Korean', 'Thailand']),
-            DateInput('Date of Birth', 'Birthday', false, (String value){ setState(() {
+            DateInput(setting.language == "English" ? "Date of Birth" : "Ngày sinh", setting.language == "English" ? "Date of Birth" : "Ngày sinh", false, (String value){ setState(() {
               birthDay = value;
             });}),
 
             PartName('CV'),
 
-            TextInput("Interests", "Interestes", false, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? "Interestes" : "Sở thích", setting.language == "English" ? "Interestes" : "Sở thích", false, TextInputType.text, (String value){setState(() {
               interestes = value;
             });}),
-            TextInput("Education", "Education", false, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? "Education" : "Học vấn", setting.language == "English" ? "Education" : "Học vấn", false, TextInputType.text, (String value){setState(() {
               education = value;
             });}),
-            TextInput("Experience", "Experience", false, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? "Experience" : "Kinh nghiệm", setting.language == "English" ? "Experience" : "Kinh nghiệm" , false, TextInputType.text, (String value){setState(() {
               experience = value;
             });}),
-            TextInput("Current or Previous Profession", "Current or Previous Profession", false, TextInputType.text, (String value){setState(() {
+            TextInput(setting.language == "English" ? "Current or Previous Profession" : "Nghề nghiệp", setting.language == "English" ? "Current or Previous Profession" : "Nghề nghiệp", false, TextInputType.text, (String value){setState(() {
               profession = value;
             });}),
 
-            PartName('Languages I speak'),
-            TextInput("Languages", "Languages", false, TextInputType.text, (String value){setState(() {
+            PartName(setting.language == "English" ? 'Languages I speak' : "Ngôn ngữ mà tôi nói"),
+            TextInput(setting.language == "English" ? "Languages" : "Ngôn ngữ", setting.language == "English" ? "Languages" : "Ngôn ngữ", false, TextInputType.text, (String value){setState(() {
               languages = value;
             });}),
 
-            PartName('Who I teach'),
-            TextInput("Introduction", "Introduction", false, TextInputType.text, (String value){setState(() {
+            PartName(setting.language == "English" ? 'Who I teach' : "Đối tượng giảng dạy"),
+            TextInput(setting.language == "English" ? "Introduction" : "Giới thiệu", setting.language == "English" ? "Introduction" : "Giới thiệu", false, TextInputType.text, (String value){setState(() {
               introduction = value;
             });}),
 
-            SelectedInput('I am best at teaching students who are', 'Level', (String value){setState(() {
+            SelectedInput(setting.language == "English" ? 'I am best at teaching students who are' : "Tôi sẽ giảng dạy tốt nhất ở trình độ", setting.language == "English" ? 'Level' : "Trình độ", (String value){setState(() {
               level = value;
             });}, ['Beginner', 'Intermediate', 'Advanced']),
 
             Container(
               margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-              child: Text('My specialties are', style: TextStyle(fontWeight: FontWeight.bold),)
+              child: Text(setting.language == "English" ? 'My specialties are' : "Chuyên môn của tôi là", style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),)
             ),
 
             CheckBox('English for Kids',(String title){ setState(() {
@@ -145,7 +149,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
               specialties.remove(title);
             });}),
 
-            PartName('Video introduce'),
+            PartName(setting.language == "English" ? 'Video introduce' : "Video giới thiệu"),
 
             GestureDetector(
               onTap: () {},
@@ -157,10 +161,11 @@ class _BecomeATutorState extends State<BecomeATutor>{
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.blue)
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'Upload video here...',
+                      setting.language == "English" ? 'Upload video here...': "Đăng tải video ở đây...",
                       textAlign: TextAlign.center,
+                      style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                     )
                   ),
                 )
@@ -169,7 +174,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button('Submit', () {Navigator.pop(context);}),
+              child: Button(setting.language == "English" ? 'Submit': "Gửi", () {Navigator.pop(context);}),
             )
           ],
         ),

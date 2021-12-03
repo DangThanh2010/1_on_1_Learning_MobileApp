@@ -4,6 +4,7 @@ import 'package:let_tutor/home/white_button.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
@@ -21,12 +22,12 @@ class Home extends StatelessWidget {
     return result;
   }
 
-  String timeToLearnToString(int seconds){
+  String timeToLearnToString(int seconds, Setting setting){
     int second = seconds % 60;
     int minute = (seconds ~/ 60) % 60;
     int hour = (seconds ~/ 60) ~/ 60;
 
-    String result = (hour < 10 ? ('0' + hour.toString()) : hour.toString()) + ' hours ' + (minute < 10 ? ('0' + minute.toString()) : minute.toString()) + ' minutes ' + (second < 10 ? ('0' + second.toString()) : second.toString()) + ' seconds';
+    String result = (hour < 10 ? ('0' + hour.toString()) : hour.toString()) + (setting.language == "English" ? ' hours ' : ' giờ ') + (minute < 10 ? ('0' + minute.toString()) : minute.toString()) + (setting.language == "English" ? ' minutes ' : ' phút ') + (second < 10 ? ('0' + second.toString()) : second.toString()) + (setting.language == "English" ? ' seconds' : ' giây');
 
     return result;
   }
@@ -49,10 +50,11 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     ListBookingDTO bookings = context.watch<ListBookingDTO>();
+    Setting setting = context.watch<Setting>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home', style: TextStyle(color: Colors.black),),
+        title: Text(setting.language == "English" ? 'Home' : "Trang chủ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),), 
         actions: [
           GestureDetector(
             child: Container(
@@ -72,10 +74,10 @@ class Home extends StatelessWidget {
             },
           )
         ],
-        backgroundColor: Colors.white,
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             Container(
@@ -88,9 +90,9 @@ class Home extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 10),
                       child: 
                       Text(
-                        'Total lesson time is ${timeToLearnToString(getTimeToLearn(bookings))}',
+                        setting.language == "English" ? 'Total lesson time is ${timeToLearnToString(getTimeToLearn(bookings), setting)}' : 'Tổng thời gian đã học ${timeToLearnToString(getTimeToLearn(bookings), setting)}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -102,10 +104,10 @@ class Home extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: 
-                      const Text(
-                        'Upcoming lesson',
+                      Text(
+                        setting.language == "English" ? 'Upcoming lesson' : 'Buổi học sắp diễn ra',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                         ),
                       )
@@ -119,19 +121,19 @@ class Home extends StatelessWidget {
                           child: Text(
                             dateOfUpcomingToString(getListUpcoming(bookings)[0]),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                             )
                           )
                         ), 
-                        WhiteButton('Enter lesson room', (){ Navigator.pushNamed(context, "/video_conference");})
+                        WhiteButton(setting.language == "English" ? 'Enter lesson room' : 'Vào lớp', (){ Navigator.pushNamed(context, "/video_conference");})
                       ] : [
                         Container(
                           margin: const EdgeInsets.only(right: 5),
                           child: Text(
-                            'No upcoming',
+                            setting.language == "English" ? 'No upcoming lesson' : 'Không có buổi học sắp diễn ra',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                             )
                           )
@@ -140,7 +142,7 @@ class Home extends StatelessWidget {
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      child: WhiteButton('Book more', (){ setSelectedIndex(3); })
+                      child: WhiteButton(setting.language == "English" ? 'Book more' : 'Đặt lịch', (){ setSelectedIndex(3); })
                     )
                   ]
                 )
@@ -150,11 +152,11 @@ class Home extends StatelessWidget {
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
               child: Row(
                 children: [
-                  const Text(
-                    'Recommended Tutors',
+                  Text(
+                    setting.language == "English" ? 'Recommended Tutors' : 'Gia sư được đề xuất',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: setting.theme == "White" ? Colors.black : Colors.white,
                     )
                   ),
 
@@ -163,7 +165,7 @@ class Home extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: (){ setSelectedIndex(3); },
-                        child: const Text('See all >')
+                        child: Text(setting.language == "English" ? 'See all >' : 'Tất cả >')
                       )
                     )
                   ),

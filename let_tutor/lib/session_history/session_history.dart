@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/session_history/session_history_card.dart';
 import 'package:provider/provider.dart';
@@ -43,17 +44,18 @@ class _SessionHistoryState extends State<SessionHistory>{
   Widget build(BuildContext context) {
     ListBookingDTO bookings = context.watch<ListBookingDTO>();
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
+    Setting setting = context.watch<Setting>();
 
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(
-          color: Colors.black
+        leading: BackButton(
+          color: setting.theme == "White" ? Colors.black : Colors.white
         ),
-        title: const Text('Session History', style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Session History' : "Lịch sử học", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: Column(
           children: [
             Container(
@@ -69,7 +71,11 @@ class _SessionHistoryState extends State<SessionHistory>{
                     searchValue = value;
                   });
                 },
-                placeholder: 'Search session history',
+                backgroundColor: setting.theme == "White" ? Colors.grey[200] : Colors.grey,
+                itemColor: setting.theme == "White" ? Colors.black : Colors.white,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
+                placeholder: setting.language == "English" ? 'Search session history' : "Tìm kiếm lịch sử học",
+                placeholderStyle: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               )
             ),
   

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +27,15 @@ class TutorCard extends StatelessWidget {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
     TutorDTO? tutor = tutors.getTutor(id);
+    Setting setting = context.watch<Setting>();
 
     return GestureDetector(
       onTap: () {Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => TutorDetail(id)),
+        MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(id))),
       );},
       child: Card(
+        color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
         elevation: 4,
         child: Column(
@@ -60,7 +63,7 @@ class TutorCard extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold),),
+                              Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                               Row(
                                 children: [
                                   Icon(Icons.star_rate, color: Colors.yellow,),
@@ -112,6 +115,7 @@ class TutorCard extends StatelessWidget {
                 tutor.introduction,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               ),
             )
           ],

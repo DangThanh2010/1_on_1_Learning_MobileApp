@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class SelectedInput extends StatefulWidget {
   SelectedInput(this.label, this.hint, this.callBack, this.selections);
@@ -30,6 +32,7 @@ class _SelectedInputState extends State<SelectedInput> {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Column(
@@ -40,7 +43,7 @@ class _SelectedInputState extends State<SelectedInput> {
             margin: const EdgeInsets.only(bottom: 10),
             child: Text(
               label,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),
             )
           ),
           Container(
@@ -58,7 +61,7 @@ class _SelectedInputState extends State<SelectedInput> {
                     child: ButtonTheme(
                       alignedDropdown: true,
                       child: DropdownButton(
-                        hint: Text(hint),
+                        hint: Text(hint, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),
                         value: currentValue,
                         onChanged: (value) {
                           setState(() {
@@ -70,7 +73,7 @@ class _SelectedInputState extends State<SelectedInput> {
                         items: selections.map((selection) {
                           return DropdownMenuItem(
                             value: selection,
-                            child: Text(selection));
+                            child: Text(selection, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600])));
                         }).toList(),
                       ),
                     ),

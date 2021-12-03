@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class DateInput extends StatefulWidget{
   DateInput(this.label, this.hint, this.isPass, this.callBack);
@@ -30,6 +32,7 @@ class _DateInputState extends State<DateInput> {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Column(
@@ -40,7 +43,7 @@ class _DateInputState extends State<DateInput> {
             margin: const EdgeInsets.only(bottom: 10),
             child: Text(
               label,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),
             )
           ),
           SizedBox(
@@ -50,19 +53,23 @@ class _DateInputState extends State<DateInput> {
               readOnly: true,
               obscureText: isPass,
               textAlignVertical: TextAlignVertical.center,
+              style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               decoration: InputDecoration(
+                filled: true,
+                fillColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                   borderRadius: BorderRadius.circular(20)
                 ),
                 hintText: hint,
+                hintStyle: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               ),
 
               onTap: () async {
                 DateTime? dateTime = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
-                  firstDate: DateTime(1900), //DateTime.now() - not to allow to choose before today.
+                  firstDate: DateTime(1900), 
                   lastDate: DateTime.now(),
                 );
 
@@ -70,7 +77,7 @@ class _DateInputState extends State<DateInput> {
                 {
                     String value = dateTime.year.toString() + '-' + dateTime.month.toString() + '-' + dateTime.day.toString();
                     setState(() {
-                         controller.text = value; //set output date to TextField value. 
+                         controller.text = value;
                     });
                     callBack(value);
                 }

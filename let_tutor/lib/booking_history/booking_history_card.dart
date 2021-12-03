@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +14,10 @@ class BookingHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     TutorDTO? tutor = tutors.getTutor(booking.idTutor);
+    Setting setting = context.watch<Setting>();
 
     return Card(
+      color: setting.theme == "White" ? Colors.white : Colors.grey[800],
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
       elevation: 4,
       child: Row(
@@ -36,10 +39,11 @@ class BookingHistoryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                 Row(
                   children: [ 
-                    Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString())),
+                    Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()),
+                        style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
                     Container(
                       padding: const EdgeInsets.all(5),
                       margin: const EdgeInsets.only(left: 5, right: 5),

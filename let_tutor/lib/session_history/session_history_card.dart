@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/session_history/give_feedback_dialog.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
@@ -26,8 +27,10 @@ class SessionHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     TutorDTO? tutor = tutors.getTutor(booking.idTutor);
+    Setting setting = context.watch<Setting>();
 
     return Card(
+      color: setting.theme == "White" ? Colors.white : Colors.grey[800],
       margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
       elevation: 4,
       child: Column(
@@ -51,34 +54,37 @@ class SessionHistoryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tutor.name, style: const TextStyle(fontWeight: FontWeight.bold),),
+                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
 
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_outlined),
+                        Icon(Icons.calendar_today_outlined, color: setting.theme == "White" ? Colors.black : Colors.white),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString()),
+                          child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString(),
+                                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
+                          )
                         )
                       ]
                     ),
 
                     Row(
                       children: [
-                        const Icon(Icons.schedule_outlined),
+                        Icon(Icons.schedule_outlined, color: setting.theme == "White" ? Colors.black : Colors.white),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text(getTimeToLearn(booking.start, booking.end)),
+                          child: Text(getTimeToLearn(booking.start, booking.end), style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
                         )
                       ]
                     ),
 
                     Row(
                       children: [
-                        const Icon(Icons.star_outline),
+                        Icon(Icons.star_outline, color: setting.theme == "White" ? Colors.black : Colors.white),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text(booking.isFeedbacked ? 'You feedbacked this session' : 'Not feedback yet'),
+                          child: Text(booking.isFeedbacked ? (setting.language == "English" ? 'You feedbacked this session' : "Bạn đã đánh giá") : (setting.language == "English" ? 'Not feedback yet' : "Bạn chưa đánh giá"),
+                                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
                         )
                       ]
                     ),
@@ -110,8 +116,8 @@ class SessionHistoryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Text (
-                      'Give Feedback',
-                      style: TextStyle(fontWeight: FontWeight.bold, color:  Colors.white),
+                      setting.language == "English" ? 'Give feedback' : "Gửi đánh giá",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 )
@@ -133,8 +139,8 @@ class SessionHistoryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Text (
-                      'See Tutor Details',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                      setting.language == "English" ? 'See Tutor Details' : "Xem chi tiết gia sư",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
                   ),
                 )

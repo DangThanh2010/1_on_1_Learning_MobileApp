@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class SignIn extends StatefulWidget {
   SignIn(this.setLoginStatus);
@@ -53,13 +55,15 @@ class _SignInState extends State<SignIn>{
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign in', style: TextStyle(color: Colors.black),), 
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Sign in' : "Đăng nhập", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),), 
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             SizedBox(
@@ -70,7 +74,7 @@ class _SignInState extends State<SignIn>{
             TextInput('Email','example@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });} ),
-            TextInput('Password', '******', true, TextInputType.text, (String value){ setState(() {
+            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", '******', true, TextInputType.text, (String value){ setState(() {
               password = value;
             });} ),
             Container(
@@ -80,21 +84,21 @@ class _SignInState extends State<SignIn>{
                 onPressed: () {
                   Navigator.pushNamed(context, "/forgot_password");
                 },
-                child: const Text('Forgot Password?')
+                child: Text(setting.language == "English" ? "Forgot Password?" : "Quên mật khẩu?"),
               )
             ),
-            Button('Sign in', handleSignIn),
+            Button(setting.language == "English" ? 'Sign in' : "Đăng nhập", handleSignIn),
             SocialSignin(),
 
             Row(
               mainAxisAlignment : MainAxisAlignment.center,
               children: [
-                const Text("Don't have account? "),
+                Text(setting.language == "English" ? "Don't have account? " : "Bạn chưa có tài khoản? ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, "/sign_up");
                   },
-                  child: const Text('Sign up')
+                  child: Text(setting.language == "English" ? "Sign up" : "Đăng ký"),
                 )
               ]
             ),
