@@ -102,7 +102,7 @@ class SessionHistoryCard extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return GiveFeedbackDialog(tutor.name);              
+                        return GiveFeedbackDialog(tutor.name, tutor.id, booking.id);              
                       }
                     );
                   },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
@@ -26,7 +27,9 @@ class TutorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
+    ListCommentDTO comments = context.watch<ListCommentDTO>();
     TutorDTO? tutor = tutors.getTutor(id);
+    int star = comments.getRateForTutor(id);
     Setting setting = context.watch<Setting>();
 
     return GestureDetector(
@@ -65,13 +68,8 @@ class TutorCard extends StatelessWidget {
                             children: [
                               Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                               Row(
-                                children: [
-                                  Icon(Icons.star_rate, color: Colors.yellow,),
-                                  Icon(Icons.star_rate, color: Colors.yellow,),
-                                  Icon(Icons.star_rate, color: Colors.yellow,),
-                                  Icon(Icons.star_rate, color: Colors.yellow,),
-                                  Icon(Icons.star_rate, color: Colors.yellow,),     
-                                ],
+                                children: List<Widget>.generate(star, (index) => const Icon(Icons.star_rate, color: Colors.yellow,))
+                                          + List<Widget>.generate(5 - star, (index) => const Icon(Icons.star_rate, color: Colors.black,)) 
                               )
                             ],
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/language_dto.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
@@ -26,7 +27,9 @@ class TutorCardForSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
+    ListCommentDTO comments = context.watch<ListCommentDTO>();
     TutorDTO? tutor = tutors.getTutor(id);
+    int star = comments.getRateForTutor(id);
     Setting setting = context.watch<Setting>();
     
     return GestureDetector(
@@ -68,7 +71,7 @@ class TutorCardForSearch extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text('5.00', style: TextStyle(color: Colors.red),),
+                                  Text('${star}', style: TextStyle(color: Colors.red),),
                                   Icon(Icons.star_rate, color: Colors.yellow,),    
                                 ],
                               )

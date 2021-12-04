@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 
 import 'package:let_tutor/tutors/tutor_card_for_search.dart';
 import 'package:provider/provider.dart';
@@ -32,11 +34,24 @@ class _TutorsState extends State<Tutors>{
     return false;
   }
 
+  int sortTutor(TutorDTO a, TutorDTO b, ListCommentDTO listComment){
+    if (a.isFavourite == true && b.isFavourite == false){
+      return -1;
+    }
+    if (a.isFavourite == false && b.isFavourite == true){
+      return 1;
+    }
+    return (listComment.getRateForTutor(b.id) - listComment.getRateForTutor(a.id)); 
+  }
+
   @override
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
+    ListCommentDTO comments = context.watch<ListCommentDTO>();
     Setting setting = context.watch<Setting>();
+
+    tutors.list.sort((a, b) => sortTutor(a, b, comments));
     
     return Scaffold(
       appBar: AppBar(

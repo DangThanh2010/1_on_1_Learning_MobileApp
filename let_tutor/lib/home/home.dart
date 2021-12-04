@@ -3,8 +3,10 @@ import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
+import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
@@ -46,11 +48,24 @@ class Home extends StatelessWidget {
     return (booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString();
   }
 
+  int sortTutor(TutorDTO a, TutorDTO b, ListCommentDTO listComment){
+    if (a.isFavourite == true && b.isFavourite == false){
+      return -1;
+    }
+    if (a.isFavourite == false && b.isFavourite == true){
+      return 1;
+    }
+    return (listComment.getRateForTutor(b.id) - listComment.getRateForTutor(a.id)); 
+  }
+
   @override
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     ListBookingDTO bookings = context.watch<ListBookingDTO>();
+    ListCommentDTO comments = context.watch<ListCommentDTO>();
     Setting setting = context.watch<Setting>();
+
+    tutors.list.sort((a, b) => sortTutor(a, b, comments));
 
     return Scaffold(
       appBar: AppBar(

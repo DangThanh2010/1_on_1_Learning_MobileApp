@@ -25,10 +25,10 @@ List<SpecialtyDTO> listSpecialtyDTO = [SpecialtyDTO(1, 1, 'English for Kids'), S
                                        SpecialtyDTO(5, 3, 'English for Kids'),  SpecialtyDTO(6, 3, 'IELTS'),];
 
 ListCommentDTO listCommentDTO = ListCommentDTO([
-  CommentDTO(1, 1, 'Good', DateTime(2021, 11, 27, 9, 20)),
-  CommentDTO(2, 1, 'Happy', DateTime(2021, 11, 27, 10, 30)),
-  CommentDTO(3, 2, 'Very good', DateTime(2021, 11, 27, 13, 20)),
-  CommentDTO(4, 3, 'Very fun', DateTime(2021, 11, 28, 10, 35)),
+  CommentDTO(1, 1, 4, 'Good', DateTime(2021, 11, 27, 9, 20)),
+  CommentDTO(2, 1, 5, 'Happy', DateTime(2021, 11, 27, 10, 30)),
+  CommentDTO(3, 2, 4, 'Very good', DateTime(2021, 11, 27, 13, 20)),
+  CommentDTO(4, 3, 5,'Very fun', DateTime(2021, 11, 28, 10, 35)),
 ]);
 
 List<CourseDTO> listCourseDTO = [CourseDTO(1, 'images/course_picture.png', 'Basic Conversation Topics', 'Gain confidence speaking about familiar topics',

@@ -22,6 +22,17 @@ class ListBookingDTO extends ChangeNotifier{
     notifyListeners();
   }
 
+  void setFeedback(int id){
+    for(var i = 0; i < list.length; i++){
+      if(id == list[i].id){
+        list.insert(i, BookingDTO(list[i].id, list[i].idTutor, list[i].start, list[i].end, list[i].isCancel, true));
+        list.remove(list[i + 1]);
+        break;
+      }
+    }
+    notifyListeners();
+  }
+
   BookingDTO? getBooking(int id){
     for(int i = 0; i < list.length; i++){
       if(list[i].id == id){

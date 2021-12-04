@@ -3,10 +3,11 @@ import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
 
 class Comment extends StatelessWidget {
-  Comment(this.avatar, this.name, this.comment, this.time);
+  Comment(this.avatar, this.name, this.star, this.comment, this.time);
 
   final ImageProvider avatar;
   final String name;
+  final int star;
   final String comment;
   final String time;
 
@@ -47,13 +48,8 @@ class Comment extends StatelessWidget {
                             margin: const EdgeInsets.only(right: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(Icons.star_rate, color: Colors.yellow,),   
-                                Icon(Icons.star_rate, color: Colors.yellow,),    
-                                Icon(Icons.star_rate, color: Colors.yellow,),   
-                                Icon(Icons.star_rate, color: Colors.yellow,),   
-                                Icon(Icons.star_rate, color: Colors.yellow,),   
-                              ],
+                              children: List<Widget>.generate(star, (index) => const Icon(Icons.star_rate, color: Colors.yellow,))
+                                        + List<Widget>.generate(5 - star, (index) => const Icon(Icons.star_rate, color: Colors.black,))
                             )
                           )
                         ),

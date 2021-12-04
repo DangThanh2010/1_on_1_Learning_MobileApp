@@ -23,8 +23,8 @@ class TutorDetail extends StatelessWidget {
 
   Widget titleName(String title){
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),)
+      margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),)
     );
   } 
 
@@ -48,11 +48,15 @@ class TutorDetail extends StatelessWidget {
     return tags;
   }
 
+  String dateTimeToString(DateTime dateTime){
+    return (dateTime.hour < 10 ? ('0' + dateTime.hour.toString()) : dateTime.hour.toString()) + ':' + (dateTime.minute < 10 ? ('0' + dateTime.minute.toString()) : dateTime.minute.toString()) + ':' + (dateTime.second < 10 ? ('0' + dateTime.second.toString()) : dateTime.second.toString()) + ', ' + (dateTime.day < 10 ? ('0' + dateTime.day.toString()) : dateTime.day.toString()) + '/' + (dateTime.month < 10 ? ('0' + dateTime.month.toString()) : dateTime.month.toString()) + '/' + dateTime.year.toString();
+  }
+
   List<Widget> generateComments(List<CommentDTO> listComment){
     List<Widget> comments = [];
     for(int j = 0; j < listComment.length; j++){
       if(id == listComment[j].idTutor){
-        comments.add(Comment(AssetImage('images/avatar.jpg'), 'April Corpuz', listComment[j].comment, listComment[j].dateTime.toString()));
+        comments.add(Comment(const AssetImage('images/avatar.jpg'), 'April Corpuz', listComment[j].star, listComment[j].comment, dateTimeToString(listComment[j].dateTime)));
       }
     }
     return comments;
@@ -65,6 +69,7 @@ class TutorDetail extends StatelessWidget {
     List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
     List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
     TutorDTO? tutor = tutors.getTutor(id);
+    int star = comments.getRateForTutor(id);
     Setting setting = context.watch<Setting>();
     
     return Scaffold(
@@ -84,7 +89,7 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, tutor.isFavourite, () { tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);}),
+            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, star, tutor.isFavourite, () { tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);}),
 
             Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
               showDialog(

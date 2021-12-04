@@ -8,6 +8,7 @@ class ListCommentDTO extends ChangeNotifier{
 
   void addComment(CommentDTO item){
     list.add(item);
+    list.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     notifyListeners();
   }
 
@@ -19,6 +20,18 @@ class ListCommentDTO extends ChangeNotifier{
       }
     }
     return result;
+  }
+
+  int getRateForTutor(int idtutor){
+    double result = 0;
+    double length = 0;
+    for(int i = 0; i < list.length; i++){
+      if(list[i].idTutor == idtutor){
+        result += list[i].star;
+        length++;
+      }
+    }
+    return length == 0 ? 0 : (result / length).round();
   }
 
   int getNextId(){

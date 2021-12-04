@@ -4,11 +4,12 @@ import 'package:provider/provider.dart';
 
 class Intro extends StatelessWidget {
 
-  Intro(this.avatar, this.name, this.nation, this.isFavourite, this.callBack);
+  Intro(this.avatar, this.name, this.nation, this.star, this.isFavourite, this.callBack);
 
   final ImageProvider avatar;
   final String name;
   final String nation;
+  final int star;
   final bool isFavourite;
   final VoidCallback callBack;
 
@@ -48,13 +49,8 @@ class Intro extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(Icons.star_rate, color: Colors.yellow,),
-                    Icon(Icons.star_rate, color: Colors.yellow,),
-                    Icon(Icons.star_rate, color: Colors.yellow,),
-                    Icon(Icons.star_rate, color: Colors.yellow,),
-                    Icon(Icons.star_rate, color: Colors.yellow,),
-                  ],
+                  children: List<Widget>.generate(star, (index) => const Icon(Icons.star_rate, color: Colors.yellow,))
+                            + List<Widget>.generate(5 - star, (index) => Icon(Icons.star_rate, color: setting.theme == "White" ? Colors.black : Colors.grey,))
                 ),
                 GestureDetector(
                   onTap: () {

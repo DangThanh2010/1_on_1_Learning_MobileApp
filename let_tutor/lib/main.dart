@@ -21,6 +21,7 @@ import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/topic_dto.dart';
+import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
 import 'package:let_tutor/settings/settings.dart';
@@ -49,7 +50,7 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     listBooking.list.sort((a, b) => a.start.compareTo(b.start));
-
+    
     Setting setting = Setting("English", "White");
     SharedPreferences.getInstance().then((prefs){
       setting.language = prefs.getString('language') ?? "English";
