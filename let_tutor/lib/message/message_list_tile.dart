@@ -54,7 +54,7 @@ class MessageListTile extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                isSentByMe ? setting.language == "English" ? 'You: ' : 'Bạn: ' + message : message,
+                isSentByMe ? (setting.language == "English" ? 'You: ' : 'Bạn: ') + message : message,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)

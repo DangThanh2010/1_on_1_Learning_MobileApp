@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class Comment extends StatelessWidget {
   Comment(this.avatar, this.name, this.comment, this.time);
@@ -12,7 +12,10 @@ class Comment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
     return Card(
+      color: setting.theme == "White" ? Colors.white : Colors.grey[800],
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       elevation: 4,
       child: Column(
@@ -37,7 +40,7 @@ class Comment extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(name, style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text(name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                         Expanded(
                           child: 
                           Container (
@@ -60,7 +63,7 @@ class Comment extends StatelessWidget {
                     Container(
                       margin: const EdgeInsets.only(right: 10),
                       alignment: Alignment.centerLeft,
-                      child: Text(comment)
+                      child: Text(comment, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
                     ),
                   ]
                 )
@@ -71,7 +74,7 @@ class Comment extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(10),
             alignment: Alignment.centerRight,
-            child: Text(time),
+            child: Text(time, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
           )
         ],
       ),

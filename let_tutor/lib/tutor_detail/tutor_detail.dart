@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
+import 'package:let_tutor/message_detail/message_detail.dart';
 import 'package:let_tutor/model/comment_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/tutor_detail/booking_dialog.dart';
@@ -63,10 +65,11 @@ class TutorDetail extends StatelessWidget {
     List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
     List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
     TutorDTO? tutor = tutors.getTutor(id);
+    Setting setting = context.watch<Setting>();
     
     return Scaffold(
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
             Container(
@@ -76,13 +79,14 @@ class TutorDetail extends StatelessWidget {
                 child: Text(
                   'Video',
                   textAlign: TextAlign.center,
+                  style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
                   )
               )
             ),
 
             Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, tutor.isFavourite, () { tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);}),
 
-            Button('Booking', () {
+            Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -97,8 +101,12 @@ class TutorDetail extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                   IconText(Icons.chat, 'Message', () {},),
-                   IconText(Icons.report, 'Report', () {
+                   IconText(Icons.chat, setting.language == "English" ? 'Message' : "Nhắn tin", () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SafeArea(child: MessageDetail())),
+                  );},),
+                   IconText(Icons.report, setting.language == "English" ? 'Report' : "Báo cáo", () {
                      showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -113,11 +121,12 @@ class TutorDetail extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Text(
-                tutor.introduction
+                tutor.introduction,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
               ) 
             ),
 
-            titleName('Languages'),
+            titleName(setting.language == "English" ? 'Languages' : 'Ngôn ngữ'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
               child:  SingleChildScrollView(
@@ -129,31 +138,31 @@ class TutorDetail extends StatelessWidget {
               )
             ),
            
-            titleName('Education'),
+            titleName(setting.language == "English" ? 'Education' : 'Học vấn'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.education)
+              child: Text(tutor.education, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            titleName('Experience'),
+            titleName(setting.language == "English" ? 'Experience' : 'Kinh nghiệm'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.experience)
+              child: Text(tutor.experience, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            titleName('Interests'),
+            titleName(setting.language == "English" ? 'Interests' : 'Sở thích'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.interests)
+              child: Text(tutor.interests, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            titleName('Profession'),
+            titleName(setting.language == "English" ? 'Profession' : 'Nghề nghiệp'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.profession)
+              child: Text(tutor.profession, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            titleName('Specialties'),
+            titleName(setting.language == "English" ? 'Specialties' : 'Chuyên môn'),
             Container(
               margin: const EdgeInsets.only( left: 20, right: 20),
               child:  SingleChildScrollView(
@@ -165,7 +174,7 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            titleName('Rating and Comment (${comments.getLengthForTutor(tutor.id)})'),
+            titleName(setting.language == "English" ? 'Rating and Comment (${comments.getLengthForTutor(tutor.id)})' : 'Đánh giá và bình luận (${comments.getLengthForTutor(tutor.id)})'),
           ] + generateComments(comments.list),
         ),
       )

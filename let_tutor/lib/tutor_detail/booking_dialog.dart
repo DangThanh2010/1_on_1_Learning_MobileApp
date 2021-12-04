@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class BookingDialog extends StatelessWidget{
   BookingDialog(this.start, this.end);
@@ -24,10 +26,10 @@ class BookingDialog extends StatelessWidget{
     return result;
   }
 
-  Widget setupContent(List<DateTime> start, List<DateTime> end, context) {
+  Widget setupContent(List<DateTime> start, List<DateTime> end, context, Setting setting) {
     return 
       Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         height: 300, 
         width: 300, 
         child: ListView(
@@ -37,11 +39,15 @@ class BookingDialog extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Center(
-        child: Text('Pick your schedule'),
+    Setting setting = context.watch<Setting>();
+
+    return AlertDialog(  
+      backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800], 
+      title: Center(
+        child: Text(setting.language == "English" ? 'Pick your schedule' : 'Hãy chọn lịch học bạn muốn',
+                    style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
       ),
-      content: setupContent(start, end, context),
+      content: setupContent(start, end, context, setting),
     );
   }
 }

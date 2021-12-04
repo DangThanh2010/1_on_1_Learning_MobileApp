@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 
 import 'package:let_tutor/tutors/tutor_card_for_search.dart';
@@ -17,7 +18,7 @@ class Tutors extends StatefulWidget {
 class _TutorsState extends State<Tutors>{
   String searchValue = "";
   String tagValue = "All";
-  final List<String> tags = ["All", 'English for Kids', 'Conversational English', 'IELTS']; 
+  final List<String> tags = ["All", 'English for Kids', 'Conversational English', 'Business English', 'IELTS', 'TOEIC', 'TOEFL', 'PET', 'KET']; 
 
   bool checkSpecialty(int id, String specialty, List<SpecialtyDTO> specialties){
     if(specialty == "All"){
@@ -35,20 +36,20 @@ class _TutorsState extends State<Tutors>{
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
     List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
+    Setting setting = context.watch<Setting>();
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tutors', style: TextStyle(color: Colors.black),),
-        backgroundColor: Colors.white,
+        title: Text(setting.language == "English" ? 'Tutors' : "Gia sư", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),  
+        backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
         elevation: 0.0,),
       body: Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.black,
         child: Column(
           children: [
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
               child: CupertinoSearchTextField(
-                placeholder: 'Search Tutors',
                 onSubmitted: (value){
                   setState(() {
                   searchValue = value;
@@ -58,7 +59,12 @@ class _TutorsState extends State<Tutors>{
                   setState(() {
                   searchValue = value;
                   });
-                }
+                },
+                backgroundColor: setting.theme == "White" ? Colors.grey[200] : Colors.grey,
+                itemColor: setting.theme == "White" ? Colors.black : Colors.white,
+                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
+                placeholder: setting.language == "English" ? 'Search Tutors' : "Tìm kiếm gia sư",
+                placeholderStyle: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               )
             ),
             
@@ -67,7 +73,7 @@ class _TutorsState extends State<Tutors>{
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
               child: TextButton(
                 onPressed: () {Navigator.pushNamed(context, "/become_a_tutor"); }, 
-                child: const Text('Become a tutor >')
+                child: Text(setting.language == "English" ? 'Become a tutor >' : "Trở thành gia sư >")
               )
             ),
             
@@ -87,7 +93,8 @@ class _TutorsState extends State<Tutors>{
             ),
             Expanded(
               child: ListView(
-                children: searchValue == "" ? tutors.list.where((e) => checkSpecialty(e.id, tagValue, specialties)).toList().map((item) => TutorCardForSearch(item.id)).toList() : tutors.list.where((e) => (e.name.toLowerCase().contains(searchValue.toLowerCase()) && checkSpecialty(e.id, tagValue, specialties))).toList().map((item) => TutorCardForSearch(item.id)).toList()  
+                children: searchValue == "" ? tutors.list.where((e) => checkSpecialty(e.id, tagValue, specialties)).toList().map((item) => TutorCardForSearch(item.id)).toList() 
+                          : tutors.list.where((e) => (e.name.toLowerCase().contains(searchValue.toLowerCase()) && checkSpecialty(e.id, tagValue, specialties))).toList().map((item) => TutorCardForSearch(item.id)).toList()  
               )
             )
           ],

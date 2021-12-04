@@ -159,12 +159,12 @@ class _MyAppState extends State<MyApp> {
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.people),
-              label: 'Tutor',
+              label: setting.language == "English" ? 'Tutors' : "Gia sư",
               backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.book),
-              label: setting.language == "English" ? 'Course' : "Khóa học",
+              label: setting.language == "English" ? 'Courses' : "Khóa học",
               backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
             ),
             BottomNavigationBarItem(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class Intro extends StatelessWidget {
 
@@ -12,6 +14,8 @@ class Intro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
     return Container(
       margin: const EdgeInsets.only(top:10, left: 20, right: 20),
       child: Row(
@@ -32,9 +36,9 @@ class Intro extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-              Text('Teacher'),
-              Text(nation, style: TextStyle(fontWeight: FontWeight.bold),),   
+              Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: setting.theme == "White" ? Colors.black : Colors.white,),),
+              Text(setting.language == "English" ? 'Tutor' : "Gia sư", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white,),),
+              Text(nation, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white,),),   
             ],
           ),
 
@@ -56,7 +60,7 @@ class Intro extends StatelessWidget {
                   onTap: () {
                     callBack();
                   },
-                  child: isFavourite ? Icon(Icons.favorite, color: Colors.pink,) : Icon(Icons.favorite_border, color: Colors.pink,),
+                  child: isFavourite ? const Icon(Icons.favorite, color: Colors.pink,) : const Icon(Icons.favorite_border, color: Colors.pink,),
                 ),
               ],
             )

@@ -2,27 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/check_box.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class ReportDialog extends StatelessWidget{
   ReportDialog(this.name);
 
   final String name;
 
-  Widget setupContent(context) {
+  Widget setupContent(context, Setting setting) {
     return 
       Container(
-        color: Colors.white,
+        color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         height: 400,
         width: 300, 
         child: ListView(
           children: [
-            Text("Help us understand what's happening", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),),
-            CheckBox('This tutor is annoying me', (String value) {}, (String value) {}),
-            CheckBox('This profile is pretending be someone or is fake', (String value) {}, (String value) {}),
-            CheckBox('Inappropriate profile photo', (String value) {}, (String value) {}),
-            TextInput('Other', 'Other reasons', false, TextInputType.text, (String value){}),
+            Text(setting.language == "English" ? "Help us understand what's happening" : "Bạn đang gặp phải vấn đề gì",
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),),
+            CheckBox(setting.language == "English" ? 'This tutor is annoying me' : "Gia sư này làm phiền tôi",
+                    (String value) {}, (String value) {}),
+            CheckBox(setting.language == "English" ? 'This profile is pretending be someone or is fake' : "Hồ sơ này là giả mạo",
+                    (String value) {}, (String value) {}),
+            CheckBox(setting.language == "English" ? 'Inappropriate profile photo' : "Ảnh hồ sơ không phù hợp",
+                    (String value) {}, (String value) {}),
+            TextInput(setting.language == "English" ? 'Other' : "Lý do khác",
+                    setting.language == "English" ? 'Other' : "Lý do khác",
+                    false, TextInputType.text, (String value){}),
 
-            Button('Report', () {
+            Button(setting.language == "English" ? 'Report' : "Báo cáo", () {
               Navigator.pop(context);
             })
           ]
@@ -32,11 +40,15 @@ class ReportDialog extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+    
     return AlertDialog(
+      backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
       title: Center(
-        child: Text('Report ' + name),
+        child: Text(setting.language == "English" ? 'Report ' + name : "Báo cáo về " + name,
+                    style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
       ),
-      content: setupContent(context),
+      content: setupContent(context, setting),
     );
   }
 }

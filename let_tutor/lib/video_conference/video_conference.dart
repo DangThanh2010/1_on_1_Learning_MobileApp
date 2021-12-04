@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class Time {
   int hour;
@@ -33,10 +35,11 @@ class Time {
   }
 
   Time downTime(){
-    if(this.hour <= 0 && this.minute <= 0 && this.second <= 0)
-      return new Time(0,0,0);
-    else
-      return new Time(this.hour, this.minute, this.second - 1);
+    if(hour <= 0 && minute <= 0 && second <= 0) {
+      return Time(0,0,0);
+    } else {
+      return Time(hour, minute, second - 1);
+    }
   }
 }
 
@@ -49,17 +52,19 @@ class VideoCoference extends StatefulWidget {
 
 class _VideoCoferenceState extends State<VideoCoference>{
 
-  Time timeWait = new Time(0,0,0);
+  Time timeWait = Time(0,0,0);
 
   @override
   void initState() {
     super.initState();
-    timeWait = new Time(DateTime.now().hour, DateTime.now().minute, DateTime.now().second);
+    timeWait = Time(DateTime.now().hour, DateTime.now().minute, DateTime.now().second);
   }
 
   @override
   Widget build(BuildContext context) {
-    Timer timer = new Timer(const Duration(milliseconds: 1000), () {
+    Setting setting = context.watch<Setting>();
+
+    Timer timer = Timer(const Duration(milliseconds: 1000), () {
       setState(() {
         timeWait = timeWait.downTime();
       });
@@ -83,7 +88,7 @@ class _VideoCoferenceState extends State<VideoCoference>{
               borderRadius: BorderRadius.circular(10)
             ),
             child: Text(
-              'Lesson will be started after\n\n'
+              (setting.language == "English" ? 'Lesson will be started after\n\n' : 'Lớp học sẽ bắt đầu sau\n\n')
               + (timeWait.hour < 10 ? ('0' + timeWait.hour.toString()) : timeWait.hour.toString())
               + ' : ' + (timeWait.minute < 10 ? ('0' + timeWait.minute.toString()) : timeWait.minute.toString())
               + ' : ' + (timeWait.second < 10 ? ('0' + timeWait.second.toString()) : timeWait.second.toString()),
