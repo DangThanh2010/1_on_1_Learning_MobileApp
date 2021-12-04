@@ -8,6 +8,7 @@ class ListBookingDTO extends ChangeNotifier{
 
   void addBooking(BookingDTO item){
     list.add(item);
+    list.sort((a, b) => a.start.compareTo(b.start));
     notifyListeners();
   }
 

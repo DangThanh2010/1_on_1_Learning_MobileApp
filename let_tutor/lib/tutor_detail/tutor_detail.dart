@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/data/data.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
@@ -6,6 +7,7 @@ import 'package:let_tutor/model/comment_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
@@ -62,6 +64,17 @@ class TutorDetail extends StatelessWidget {
     return comments;
   }
 
+  List<ScheduleDTO> getSchedule(List<ScheduleDTO> listSchedule){
+    List<ScheduleDTO> result = [];
+    for(int i = 0; i < listScheduleDTO.length; i++){
+      if(id == listSchedule[i].idTutor){
+        result.add(listSchedule[i]);
+      }
+    }
+    result.sort((a, b) => a.start.compareTo(b.start));
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     ListTutorDTO tutors = context.watch<ListTutorDTO>();
@@ -70,7 +83,17 @@ class TutorDetail extends StatelessWidget {
     List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
     TutorDTO? tutor = tutors.getTutor(id);
     int star = comments.getRateForTutor(id);
+    List<ScheduleDTO> schedules = context.watch<List<ScheduleDTO>>();
     Setting setting = context.watch<Setting>();
+
+    void showSnackBar(String content){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),),
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
     
     return Scaffold(
       body: Container(
@@ -95,8 +118,7 @@ class TutorDetail extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return BookingDialog([DateTime(2021, 10, 24, 22, 0, 0, 0, 0), DateTime(2021, 10, 24, 23, 0, 0, 0, 0), DateTime(2021, 10, 25, 7, 0, 0, 0, 0),  DateTime(2021, 10, 25, 23, 0, 0, 0, 0), DateTime(2021, 10, 26, 8, 0, 0, 0, 0),],
-                      [DateTime(2021, 10, 24, 22, 25, 0, 0, 0), DateTime(2021, 10, 24, 23, 25, 0, 0, 0), DateTime(2021, 10, 25, 7, 25, 0, 0, 0), DateTime(2021, 10, 25, 23, 25, 0, 0, 0),  DateTime(2021, 10, 26, 8, 25, 0, 0, 0)]);
+                  return BookingDialog(getSchedule(schedules), showSnackBar);
                 }
               );
             }),

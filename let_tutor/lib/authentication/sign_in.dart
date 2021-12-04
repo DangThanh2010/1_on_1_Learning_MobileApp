@@ -21,9 +21,9 @@ class _SignInState extends State<SignIn>{
   String email = "";
   String password = "";
 
-  bool validateEmail(String Email){
-    for(int i = 0; i < Email.length; i++){
-      if(Email[i] == '@'){
+  bool validateEmail(String email){
+    for(int i = 0; i < email.length; i++){
+      if(email[i] == '@'){
         return true;
       }
     }

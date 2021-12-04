@@ -6,6 +6,7 @@ import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/topic_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
@@ -57,3 +58,17 @@ List<FeedbackDTO> listFeedbackDTO = [FeedbackDTO(1, 2, 5, 'Thank you for booking
 ListBookingDTO listBookingDTO = ListBookingDTO([BookingDTO(1, 1, DateTime(2021, 11, 28, 8, 0, 0, 0, 0), DateTime(2021, 11, 28, 8, 25, 0, 0, 0), false, false),
                                               BookingDTO(2, 2, DateTime(2021, 12, 29, 8, 0, 0, 0, 0), DateTime(2021, 12, 29, 8, 30, 0, 0, 0), false, false),
                                               BookingDTO(3, 3, DateTime(2021, 12, 30, 11, 0, 0, 0, 0), DateTime(2021, 12, 30, 11, 25, 0, 0, 0), false, false),]);
+
+List<ScheduleDTO> listScheduleDTO = [ScheduleDTO(1, 1, DateTime(2021, 12, 27, 8, 0, 0, 0, 0), DateTime(2021, 12, 27, 8, 30, 0, 0, 0)),
+                                    ScheduleDTO(2, 1, DateTime(2021, 12, 27, 10, 15, 0, 0, 0), DateTime(2021, 12, 27, 10, 40, 0, 0, 0)),
+                                    ScheduleDTO(3, 1, DateTime(2021, 12, 28, 12, 0, 0, 0, 0), DateTime(2021, 12, 28, 12, 30, 0, 0, 0)),
+                                    ScheduleDTO(4, 1, DateTime(2021, 12, 29, 20, 5, 0, 0, 0), DateTime(2021, 12, 27, 20, 30, 0, 0, 0)),
+                                    ScheduleDTO(5, 2, DateTime(2021, 12, 27, 9, 0, 0, 0, 0), DateTime(2021, 12, 27, 9, 30, 0, 0, 0)),
+                                    ScheduleDTO(6, 2, DateTime(2021, 12, 28, 8, 0, 0, 0, 0), DateTime(2021, 12, 28, 8, 30, 0, 0, 0)),
+                                    ScheduleDTO(7, 2, DateTime(2021, 12, 28, 15, 10, 0, 0, 0), DateTime(2021, 12, 28, 15, 35, 0, 0, 0)),
+                                    ScheduleDTO(8, 2, DateTime(2021, 12, 29, 10, 5, 0, 0, 0), DateTime(2021, 12, 29, 10, 45, 0, 0, 0)),
+                                    ScheduleDTO(9, 3, DateTime(2021, 12, 27, 10, 0, 0, 0, 0), DateTime(2021, 12, 27, 10, 30, 0, 0, 0)),
+                                    ScheduleDTO(10, 3, DateTime(2021, 12, 28, 11, 0, 0, 0, 0), DateTime(2021, 12, 28, 11, 25, 0, 0, 0)),
+                                    ScheduleDTO(11, 3, DateTime(2021, 12, 29, 7, 5, 0, 0, 0), DateTime(2021, 12, 29, 7, 30, 0, 0, 0)),
+                                    ScheduleDTO(12, 3, DateTime(2021, 12, 29, 12, 0, 0, 0, 0), DateTime(2021, 12, 29, 12, 30, 0, 0, 0)),
+                                    ];

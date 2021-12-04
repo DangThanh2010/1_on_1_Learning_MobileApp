@@ -18,6 +18,7 @@ import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/topic_dto.dart';
@@ -45,8 +46,8 @@ class App extends StatelessWidget{
   final List<CourseDTO> listCourse = listCourseDTO;
   final List<TopicDTO> listTopic = listTopicDTO;
   final List<FeedbackDTO> listFeedback = listFeedbackDTO;
+  final List<ScheduleDTO> listSchedule = listScheduleDTO;
   
-
   @override
   Widget build(BuildContext context) {
     listBooking.list.sort((a, b) => a.start.compareTo(b.start));
@@ -68,6 +69,7 @@ class App extends StatelessWidget{
         Provider(create: (context) => listCourse),
         Provider(create: (context) => listTopic),
         Provider(create: (context) => listFeedback),
+        Provider(create: (context) => listSchedule),
       ],
       child: MaterialApp(
         title: "Let Tutor",
