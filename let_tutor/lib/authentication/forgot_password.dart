@@ -28,11 +28,11 @@ class _ForgotPasswordState extends State<ForgotPassword>{
       ),
     );
   }
-  void handleForgotPassword(){
+  void handleForgotPassword(Setting setting){
     if(email == ""){
-      showSnackBar("Email cannot be empty.");
+      showSnackBar(setting.language == "English" ? "Email cannot be empty." : 'Email không được rỗng.');
     }else if(!validateEmail(email)){
-      showSnackBar("The email is not a valid email address.");
+      showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }else {
       Navigator.pop(context);
     }
@@ -105,7 +105,7 @@ class _ForgotPasswordState extends State<ForgotPassword>{
                 ],
               ) 
             ),
-            Button(setting.language == "English" ? 'Send' : "Gửi", handleForgotPassword),
+            Button(setting.language == "English" ? 'Send' : "Gửi", () {handleForgotPassword(setting);}),
           ],
         ),
       )

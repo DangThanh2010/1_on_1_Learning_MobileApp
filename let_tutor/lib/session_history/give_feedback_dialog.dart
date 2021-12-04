@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/data_access/booking_dao.dart';
+import 'package:let_tutor/data_access/comment_dao.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/comment_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
@@ -51,8 +54,14 @@ class _GiveFeedbackDialogState extends State<GiveFeedbackDialog>{
                        });
                      }),
 
-            Button(setting.language == "English" ? 'Give Feedback' : 'Gửi đánh giá', () {
+            Button(setting.language == "English" ? 'Give Feedback' : 'Gửi đánh giá', () async{
+              CommentDAO commentDAO = CommentDAO();
+              await commentDAO.insert(CommentDTO(comments.getNextId(), idTutor, _star, _feedback, DateTime.now()));
               comments.addComment(CommentDTO(comments.getNextId(), idTutor, _star, _feedback, DateTime.now()));
+
+              BookingDTO? booking = bookings.getBooking(idBooking);
+              BookingDAO bookingDAO = BookingDAO();
+              await bookingDAO.update(idBooking, BookingDTO(booking!.id, booking.idTutor, booking.start, booking.end, booking.isCancel, true));
               bookings.setFeedback(idBooking);
               Navigator.pop(context);
             })

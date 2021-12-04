@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/advanced_settings/advanced_settings.dart';
 import 'package:let_tutor/authentication/forgot_password.dart';
-import 'package:let_tutor/authentication/sign_in.dart';
 import 'package:let_tutor/authentication/sign_up.dart';
 import 'package:let_tutor/become_a_tutor/become_a_tutor.dart';
 import 'package:let_tutor/booking_history/booking_history.dart';
-import 'package:let_tutor/course_detail/course_detail.dart';
-import 'package:let_tutor/courses/courses.dart';
 import 'package:let_tutor/data/data.dart';
+import 'package:let_tutor/data_access/booking_dao.dart';
+import 'package:let_tutor/data_access/comment_dao.dart';
+import 'package:let_tutor/data_access/tutor_dao.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
-import 'package:let_tutor/home/home.dart';
-import 'package:let_tutor/message/message.dart';
-import 'package:let_tutor/message_detail/message_detail.dart';
+import 'package:let_tutor/model/booking_dto.dart';
+import 'package:let_tutor/model/comment_dto.dart';
 import 'package:let_tutor/model/course_dto.dart';
 import 'package:let_tutor/model/feedback_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
@@ -23,24 +22,63 @@ import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
 import 'package:let_tutor/model/topic_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:let_tutor/myapp.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
-import 'package:let_tutor/settings/settings.dart';
-import 'package:let_tutor/tutor_detail/tutor_detail.dart';
-import 'package:let_tutor/tutors/tutors.dart';
-import 'package:let_tutor/upcoming/upcoming.dart';
 import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  TutorDAO tutorDAO = TutorDAO();
+  CommentDAO commentDAO = CommentDAO();
+  BookingDAO bookingDAO = BookingDAO();
+
+  List<TutorDTO> _listTutor = await tutorDAO.getTutorList();
+  ListTutorDTO listTutor;
+  if(_listTutor.isNotEmpty){
+    listTutor = ListTutorDTO(_listTutor); 
+  }else{
+    listTutor = listTutorDTO;
+    for(int i = 0; i < listTutorDTO.list.length; i++){
+      await tutorDAO.insert(listTutorDTO.list[i]);
+    }
+  }
+
+  List<CommentDTO> _listComment = await commentDAO.getCommentList();
+  ListCommentDTO listComment;
+  if(_listComment.isNotEmpty){
+    listComment = ListCommentDTO(_listComment);
+  }else{
+    listComment = listCommentDTO;
+    for(int i = 0; i < listCommentDTO.list.length; i++){
+      await commentDAO.insert(listCommentDTO.list[i]);
+    }
+  }
+
+  List<BookingDTO> _listBooking = await bookingDAO.getBookingList();
+  ListBookingDTO listBooking;
+  if(_listBooking.isNotEmpty){
+    listBooking = ListBookingDTO(_listBooking);
+  }else{
+    listBooking = listBookingDTO;
+    for(int i = 0; i < listBookingDTO.list.length; i++){
+      await bookingDAO.insert(listBookingDTO.list[i]);
+    }
+  }
+
+  runApp(App(listTutor, listComment, listBooking));
 }
 
 class App extends StatelessWidget{
-  final ListTutorDTO listTutor = listTutorDTO;
-  final ListCommentDTO listComment = listCommentDTO;
-  final ListBookingDTO listBooking = listBookingDTO;
+  App(this.listTutor, this.listComment, this.listBooking);
+  
+  final ListTutorDTO listTutor;
+  final ListCommentDTO listComment;
+  final ListBookingDTO listBooking;
+
   final List<LanguageDTO> listLanguage = listLanguageDTO;
   final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
   final List<CourseDTO> listCourse = listCourseDTO;
@@ -51,6 +89,7 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     listBooking.list.sort((a, b) => a.start.compareTo(b.start));
+    listComment.list.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     
     Setting setting = Setting("English", "White");
     SharedPreferences.getInstance().then((prefs){
@@ -90,110 +129,5 @@ class App extends StatelessWidget{
         ),
       )
     );
-  }
-  
-}
-
-class MyApp extends StatefulWidget{
-  @override
-  _MyAppState createState() => _MyAppState();
-
-}
-
-class _MyAppState extends State<MyApp> {
-  bool isLogin = false;
-  int selectedIndex = 0;
-
-  void setLoginStatus(){
-    setState(() {
-      isLogin = !isLogin;
-    });
-  }
-
-  void setSelectedIndex(int value){
-    setState(() {
-      selectedIndex = value;
-    });
-  }
-
-  Widget displayScreenWhenLoggedIn(){
-    if(selectedIndex == 0){
-      return Home(setSelectedIndex);
-    }
-    else if(selectedIndex == 1){
-      return Message();
-    }
-    else if(selectedIndex == 2){
-      return Upcoming();
-    }
-    else if(selectedIndex == 3){
-      return Tutors();
-    }
-    else if(selectedIndex == 4){
-      return Courses();
-    }
-    else {
-      return Settings(setLoginStatus, setSelectedIndex);
-    }
-  }
-
-  Widget displayScreen(Setting setting) {
-    if(!isLogin){
-      return SignIn(setLoginStatus);
-    }
-    else {
-      return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.home),
-              label: setting.language == "English" ? 'Home' : "Trang chủ",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.message),
-              label: setting.language == "English" ? 'Message' : "Tin nhắn",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.access_time),
-              label: setting.language == "English" ? 'Upcoming' : "Sắp diễn ra",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.people),
-              label: setting.language == "English" ? 'Tutors' : "Gia sư",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.book),
-              label: setting.language == "English" ? 'Courses' : "Khóa học",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.settings),
-              label: setting.language == "English" ? 'Settings' : "Cài đặt",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-          ],
-          currentIndex: selectedIndex,
-          selectedItemColor: Colors.blue,
-          showUnselectedLabels: true,
-          unselectedItemColor: setting.theme == "White" ? Colors.grey : Colors.white,
-          unselectedLabelStyle: TextStyle(color: setting.theme == "White" ? Colors.grey : Colors.white),
-          onTap: (index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
-        ),
-        body: displayScreenWhenLoggedIn(),
-      );
-    }
-  }
-  @override
-  Widget build(BuildContext context) {
-    Setting setting = context.watch<Setting>();
-    return displayScreen(setting);
   }
 }

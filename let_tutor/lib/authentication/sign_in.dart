@@ -37,18 +37,18 @@ class _SignInState extends State<SignIn>{
       ),
     );
   }
-  void handleSignIn(){
+  void handleSignIn(Setting setting){
     if(email == "admin@email.com" && password == "admin"){
       setLoginStatus();
     }
     else{
       if(email == "" || password == ""){
-        showSnackBar("Email and password cannot be empty.");
+        showSnackBar(setting.language == "English" ? "Email and password cannot be empty." : 'Email và mật khẩu không được rỗng.');
       }else if(!validateEmail(email)){
-        showSnackBar("The email is not a valid email address.");
+        showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
       }
       else{
-        showSnackBar("Email or password incorrectly.");
+        showSnackBar(setting.language == "English" ? "Email or password incorrectly." : 'Email hoặc mật khẩu không đúng.');
       }
     }
   }
@@ -71,10 +71,10 @@ class _SignInState extends State<SignIn>{
               width: 100,
               child: Image.asset('images/logo.png')
             ),
-            TextInput('Email','example@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
+            TextInput('Email','admin@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });} ),
-            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", '******', true, TextInputType.text, (String value){ setState(() {
+            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", 'admin', true, TextInputType.text, (String value){ setState(() {
               password = value;
             });} ),
             Container(
@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn>{
                 child: Text(setting.language == "English" ? "Forgot Password?" : "Quên mật khẩu?"),
               )
             ),
-            Button(setting.language == "English" ? 'Sign in' : "Đăng nhập", handleSignIn),
+            Button(setting.language == "English" ? 'Sign in' : "Đăng nhập", () { handleSignIn(setting);}),
             SocialSignin(),
 
             Row(

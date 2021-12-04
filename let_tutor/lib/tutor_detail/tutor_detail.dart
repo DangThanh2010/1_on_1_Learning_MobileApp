@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/data/data.dart';
+import 'package:let_tutor/data_access/tutor_dao.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
@@ -112,7 +113,16 @@ class TutorDetail extends StatelessWidget {
               )
             ),
 
-            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, star, tutor.isFavourite, () { tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);}),
+            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, star, tutor.isFavourite, () async{ 
+              TutorDAO tutorDAO = TutorDAO();
+              if(tutor.isFavourite){
+                await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, false, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
+                tutors.setNotFavourite(id);
+              }else{
+                await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, true, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
+                tutors.setFavourite(id);
+              }
+            }),
 
             Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
               showDialog(

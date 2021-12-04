@@ -38,6 +38,8 @@ dependencies:
   sign_button: ^2.0.1
   provider: ^6.0.1
   shared_preferences: ^2.0.9
+  sqflite:
+  path:
 
 dev_dependencies:
   flutter_test:

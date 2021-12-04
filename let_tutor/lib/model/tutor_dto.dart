@@ -12,4 +12,19 @@ class TutorDTO {
   final String experience;
   final String interests;
   final String profession;
+
+  Map<String, dynamic> toMap(){
+    return{
+      "id": id,
+      "avatar": avatar,
+      "name": name,
+      "nation": nation,
+      "isFavourite": isFavourite ? 1 : 0,
+      "introduction": introduction,
+      "education": education,
+      "experience": experience,
+      "interests": interests,
+      "profession": profession
+    };
+  }
 }

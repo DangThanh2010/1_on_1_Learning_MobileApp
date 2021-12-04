@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/data_access/booking_dao.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
@@ -12,14 +13,14 @@ class BookingDialog extends StatelessWidget{
   final List<ScheduleDTO> schedules;
   final void Function(String) callBack;
 
-  List<Widget> generateListButton(List<ScheduleDTO> schedules,  ListBookingDTO bookings, BuildContext context){
+  List<Widget> generateListButton(List<ScheduleDTO> schedules,  ListBookingDTO bookings, BuildContext context, Setting setting){
     List<Widget> result = [];
     for (var element in schedules) {
       result.add(
         Button(element.start.year.toString() + '-' + (element.start.month < 10 ? ('0' + element.start.month.toString()) : element.start.month.toString()) + '-' + (element.start.day < 10 ? ('0' + element.start.day.toString()) : element.start.day.toString())
         + '\n' + (element.start.hour < 10 ? ('0' + element.start.hour.toString()) : element.start.hour.toString()) + ':' + (element.start.minute < 10 ? ('0' + element.start.minute.toString()) : element.start.minute.toString())
         + '-' + (element.end.hour < 10 ? ('0' + element.end.hour.toString()) : element.end.hour.toString()) + ':' + (element.end.minute < 10 ? ('0' + element.end.minute.toString()) : element.end.minute.toString()),
-        (){
+        () async {
           int temp = 0;
           for(var i = 0; i < bookings.list.length; i++){
             if(bookings.list[i].idTutor == element.idTutor && bookings.list[i].start == element.start && bookings.list[i].end == element.end && bookings.list[i].isCancel == false){
@@ -28,13 +29,15 @@ class BookingDialog extends StatelessWidget{
 
           }
           if(temp == 0){
+            BookingDAO bookingDAO = BookingDAO();
+            await bookingDAO.insert(BookingDTO(bookings.getNextId(), element.idTutor, element.start, element.end, false, false));
             bookings.addBooking(BookingDTO(bookings.getNextId(), element.idTutor, element.start, element.end, false, false));
             Navigator.pop(context);
-            callBack("Đặt lịch thành công");
+            callBack(setting.language == "English" ? 'Book successfully' : "Đặt lịch thành công");
           }
           else {
             Navigator.pop(context);
-            callBack("Bạn đã đặt lịch học này trước đó");
+            callBack(setting.language == "English" ? 'You have already booked this schedule' : "Bạn đã đặt lịch học này trước đó");
           }
         })
       );
@@ -49,7 +52,7 @@ class BookingDialog extends StatelessWidget{
         height: 300, 
         width: 300, 
         child: ListView(
-          children: generateListButton(schedules, bookings, context),)
+          children: generateListButton(schedules, bookings, context, setting),)
     );
   }
 

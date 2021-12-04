@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/data_access/booking_dao.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_tutor_dto.dart';
@@ -82,7 +83,11 @@ class UpcomingCard extends StatelessWidget {
             children: [
               Expanded(
                 child:  GestureDetector(
-                  onTap: hourDifference >= 2 ? () {bookings.setCancel(booking.id);} : null,
+                  onTap: hourDifference >= 2 ? () async{
+                    BookingDAO bookingDAO = BookingDAO();
+                    await bookingDAO.update(booking.id, BookingDTO(booking.id, booking.idTutor, booking.start, booking.end, true, booking.isFeedbacked));
+                    bookings.setCancel(booking.id);
+                  } : null,
                   child: Container(
                     alignment: Alignment.center,
                     height: 40,

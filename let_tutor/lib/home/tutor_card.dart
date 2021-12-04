@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/data_access/tutor_dao.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_comment_dto.dart';
@@ -79,8 +80,15 @@ class TutorCard extends StatelessWidget {
                               margin: const EdgeInsets.all(10),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
-                                onTap: () {
-                                  tutor.isFavourite ? tutors.setNotFavourite(id) : tutors.setFavourite(id);
+                                onTap: () async{
+                                  TutorDAO tutorDAO = TutorDAO();
+                                  if(tutor.isFavourite){
+                                    await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, false, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
+                                    tutors.setNotFavourite(id);
+                                  }else{
+                                    await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, true, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
+                                    tutors.setFavourite(id);
+                                  }
                                 },
                                 child: tutor.isFavourite ? const Icon(Icons.favorite, color: Colors.pink,) : const Icon(Icons.favorite_border, color: Colors.pink,)
                               )

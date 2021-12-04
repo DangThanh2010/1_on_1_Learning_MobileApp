@@ -33,13 +33,13 @@ class _SignUpState extends State<SignUp>{
       ),
     );
   }
-  void handleSignUp(){
+  void handleSignUp(Setting setting){
     if(email == "" || password == "" || name == "" || confirmPassword == ""){
-      showSnackBar("Informations cannot be empty.");
+      showSnackBar(setting.language == "English" ? "Informations cannot be empty." : 'Thông tin không được rỗng.');
     }else if(!validateEmail(email)){
-      showSnackBar("The email is not a valid email address.");
+      showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }else if(password != confirmPassword){
-      showSnackBar("Confirm password incorrectly.");
+      showSnackBar(setting.language == "English" ? "Confirm password incorrectly." : 'Nhập lại mật khẩu không đúng.');
     }else{
       Navigator.pop(context);
     }
@@ -73,7 +73,7 @@ class _SignUpState extends State<SignUp>{
               confirmPassword = value;
             });}),
             
-            Button(setting.language == "English" ? "Sign up" : "Đăng ký", handleSignUp),
+            Button(setting.language == "English" ? "Sign up" : "Đăng ký", () {handleSignUp(setting);}),
             SocialSignin(),
 
             Row(
