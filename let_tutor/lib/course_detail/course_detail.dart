@@ -88,7 +88,7 @@ class CourseDetail extends StatelessWidget {
               child: Text(course.overview2, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
             ),
 
-            partName(setting.language == "English" ? 'Experience Level' : "Mức độ kinh ngiệm", setting),
+            partName(setting.language == "English" ? 'Experience Level' : "Mức độ kinh nghiệm", setting),
             Container(
               margin: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
               child: Text(course.level, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)) 
