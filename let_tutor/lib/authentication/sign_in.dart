@@ -64,8 +64,8 @@ class _SignInState extends State<SignIn>{
       if(res.statusCode == 200){
         var userTokens = UserTokens.fromJson(jsonDecode(res.body));
         final prefs = await SharedPreferences.getInstance();
+        
         prefs.setString('accessToken', jsonEncode(userTokens.tokens!.access!.toJson()));
-        prefs.setString('refreshToken', jsonEncode(userTokens.tokens!.refresh!.toJson()));
 
         setState(() {
           isLoading = false;
@@ -107,7 +107,7 @@ class _SignInState extends State<SignIn>{
                   child: CircularProgressIndicator()
                 )
               )
-               : const SizedBox(height: 1, width: 1),
+               : Container(),
             TextInput('Email','Email', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });} ),

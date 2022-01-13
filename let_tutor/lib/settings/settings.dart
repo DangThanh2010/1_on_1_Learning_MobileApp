@@ -4,6 +4,7 @@ import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/settings/account_info.dart';
 import 'package:let_tutor/settings/setting_feature.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatelessWidget {
   Settings(this.setLoginStatus, this.setSelectedIndex);
@@ -77,7 +78,9 @@ class Settings extends StatelessWidget {
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button(setting.language == "English" ? 'Log out' : "Đăng xuất", (){
+              child: Button(setting.language == "English" ? 'Log out' : "Đăng xuất", () async{
+                final prefs = await SharedPreferences.getInstance();
+                prefs.remove('accessToken');
                 setLoginStatus();
                 setSelectedIndex(0);
               }),

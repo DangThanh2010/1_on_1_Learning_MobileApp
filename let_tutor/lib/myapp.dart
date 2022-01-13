@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:let_tutor/authentication/sign_in.dart';
 import 'package:let_tutor/courses/courses.dart';
 import 'package:let_tutor/home/home.dart';
 import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/settings/settings.dart';
 import 'package:let_tutor/tutors/tutors.dart';
 import 'package:let_tutor/upcoming/upcoming.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyApp extends StatefulWidget{
   @override
@@ -18,6 +22,36 @@ class MyApp extends StatefulWidget{
 class _MyAppState extends State<MyApp> {
   bool isLogin = false;
   int selectedIndex = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance().then((prefs){
+      Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+      
+      if(access.token == '0'){
+        setState(() {
+          isLogin = false;
+        });
+      } else {
+        if(DateTime.parse(access.expires ?? '1990-01-01 00:00:00').difference(DateTime.now()).inSeconds < 0){
+          prefs.remove('accessToken');
+          setState(() {
+            isLogin = false;
+          });
+        }else{
+          setState(() {
+            isLogin = true;
+          });
+        }
+      }
+      
+      setState(() {
+        isLoading = false;
+      });
+    });
+    super.initState();
+  }
 
   void setLoginStatus(){
     setState(() {
@@ -109,6 +143,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
-    return displayScreen(setting);
+    return isLoading ? Container(
+                color: setting.theme == "White" ? Colors.white : Colors.black,
+                child: const SizedBox(
+                  height: 400,
+                  width: 400,
+                  child: Center(
+                    child: CircularProgressIndicator()
+                  )
+                )
+              ): displayScreen(setting);
   }
 }
