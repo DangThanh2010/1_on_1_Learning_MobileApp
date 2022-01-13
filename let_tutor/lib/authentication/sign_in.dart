@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
@@ -54,7 +55,7 @@ class _SignInState extends State<SignIn>{
       showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }
     else{
-      var res = await http.post(Uri.parse("https://sandbox.api.lettutor.com/auth/login"),
+      var res = await http.post(Uri.parse(APILINK + "auth/login"),
                       headers: {"Content-Type": "application/json"},
                       body: jsonEncode({
                           "email": email,
@@ -66,20 +67,15 @@ class _SignInState extends State<SignIn>{
         final prefs = await SharedPreferences.getInstance();
         
         prefs.setString('accessToken', jsonEncode(userTokens.tokens!.access!.toJson()));
-
-        setState(() {
-          isLoading = false;
-        });
-
         setLoginStatus();
       }
       else{
-        setState(() {
-          isLoading = false;
-        });
         showSnackBar(setting.language == "English" ? "Email or password incorrectly." : 'Email hoặc mật khẩu không đúng.');
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override

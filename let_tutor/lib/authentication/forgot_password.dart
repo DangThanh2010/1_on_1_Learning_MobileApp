@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
+
+import 'package:http/http.dart' as http;
 
 class ForgotPassword extends StatefulWidget{
   @override
@@ -11,6 +16,7 @@ class ForgotPassword extends StatefulWidget{
 
 class _ForgotPasswordState extends State<ForgotPassword>{
   String email= "";
+  bool isLoading = false;
 
   bool validateEmail(String email){
     for(int i = 0; i < email.length; i++){
@@ -28,14 +34,31 @@ class _ForgotPasswordState extends State<ForgotPassword>{
       ),
     );
   }
-  void handleForgotPassword(Setting setting){
+  void handleForgotPassword(Setting setting) async{
+    setState(() {
+      isLoading = true;
+    });
+
     if(email == ""){
       showSnackBar(setting.language == "English" ? "Email cannot be empty." : 'Email không được rỗng.');
     }else if(!validateEmail(email)){
       showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }else {
-      Navigator.pop(context);
+      var res = await http.post(Uri.parse(APILINK + "user/forgotPassword"),
+                      headers: {"Content-Type": "application/json"},
+                      body: jsonEncode({ "email": email})
+                      );
+      if(res.statusCode == 200){
+        showSnackBar(setting.language == "English" ? "Send email successfully. Please check email." : 'Hệ thống đã gửi email thành công. Vui lòng kiểm tra email.');
+        Navigator.pop(context);
+      }
+      else{
+        showSnackBar(setting.language == "English" ? "Error! Please try again." : 'Đã xảy ra lỗi! Vui lòng thử lại.');
+      }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -59,6 +82,15 @@ class _ForgotPasswordState extends State<ForgotPassword>{
               width: 100,
               child: Image.asset('images/logo.png')
             ),
+
+            isLoading ? 
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: const Center(
+                  child: CircularProgressIndicator()
+                )
+              )
+               : Container(),
             Container(
               height: 180,
               margin: const EdgeInsets.only(top: 10, bottom: 10, left: 30, right: 30),

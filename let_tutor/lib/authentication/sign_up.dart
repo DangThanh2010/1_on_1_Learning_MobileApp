@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
@@ -49,7 +50,7 @@ class _SignUpState extends State<SignUp>{
     }else if(password != confirmPassword){
       showSnackBar(setting.language == "English" ? "Confirm password incorrectly." : 'Nhập lại mật khẩu không đúng.');
     }else{
-      var res = await http.post(Uri.parse("https://sandbox.api.lettutor.com/auth/register"),
+      var res = await http.post(Uri.parse(APILINK + "auth/register"),
                       headers: {"Content-Type": "application/json"},
                       body: jsonEncode({
                           "email": email,
@@ -58,19 +59,16 @@ class _SignUpState extends State<SignUp>{
                         })
                       );
       if(res.statusCode == 201){
-        setState(() {
-          isLoading = false;
-        });
         showSnackBar(setting.language == "English" ? "Register successfully. Please check email to verify your email address." : 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.');
         Navigator.pop(context);
       }
       else{
-        setState(() {
-          isLoading = false;
-        });
         showSnackBar(setting.language == "English" ? "Error! Please try again." : 'Đã xảy ra lỗi! Vui lòng thử lại.');
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
