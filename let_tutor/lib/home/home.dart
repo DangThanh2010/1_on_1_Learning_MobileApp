@@ -1,18 +1,43 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
-import 'package:let_tutor/model/list_comment_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:let_tutor/model/token.dart';
+import 'package:let_tutor/model/tutor.dart';
 import 'package:provider/provider.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatelessWidget {
   Home(this.setSelectedIndex);
 
   final void Function(int) setSelectedIndex;
+
+  Future<ListTutor> fetchListTutor () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.get(Uri.parse(APILINK + "tutor/more?perPage=9&page=1"),
+                headers: {
+                  "Content-Type": "application/json",
+                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+                });
+    if(res.statusCode == 200){
+      var list = ListTutor.fromJson(jsonDecode(res.body));  
+      list.tutors!.rows!.sort((a, b) => sortTutor(a, b, list));
+      return list;  
+    }else {
+      return ListTutor();
+    }
+  }
 
   int getTimeToLearn(ListBookingDTO bookings){
     int result = 0;
@@ -48,26 +73,23 @@ class Home extends StatelessWidget {
     return (booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString();
   }
 
-  int sortTutor(TutorDTO a, TutorDTO b, ListCommentDTO listComment){
-    if (a.isFavourite == true && b.isFavourite == false){
+  int sortTutor(Tutor a, Tutor b, ListTutor list){
+
+    if (list.checkFavoriteTutor(a.userId) == true && list.checkFavoriteTutor(b.userId) == false){
       return -1;
     }
-    if (a.isFavourite == false && b.isFavourite == true){
+    if (list.checkFavoriteTutor(a.userId) == false && list.checkFavoriteTutor(b.userId) == true){
       return 1;
     }
-    return (listComment.getRateForTutor(b.id) - listComment.getRateForTutor(a.id)); 
+    return (b.avgRating().ceil() - a.avgRating().ceil()); 
   }
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
     ListBookingDTO bookings = context.watch<ListBookingDTO>();
-    ListCommentDTO comments = context.watch<ListCommentDTO>();
     Setting setting = context.watch<Setting>();
 
-    tutors.list.sort((a, b) => sortTutor(a, b, comments));
-
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(
         title: Text(setting.language == "English" ? 'Home' : "Trang chủ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),), 
         actions: [
@@ -188,9 +210,25 @@ class Home extends StatelessWidget {
               )
             ),
             
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: tutors.list.map((e) => TutorCard(e.id)).toList()
+            FutureBuilder<ListTutor>(
+              future: fetchListTutor(),
+               builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: const Center(
+                      child: CircularProgressIndicator()
+                    )
+                  );
+                }
+                if (snapshot.hasData) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCard(e, snapshot.data)).toList()
+                  );
+                }
+                return Container();
+              },
             )
           ],
         ),
