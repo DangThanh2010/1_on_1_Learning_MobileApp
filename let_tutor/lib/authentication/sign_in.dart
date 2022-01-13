@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/user_tokens.dart';
 import 'package:provider/provider.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
   SignIn(this.setLoginStatus);
@@ -20,6 +26,7 @@ class _SignInState extends State<SignIn>{
 
   String email = "";
   String password = "";
+  bool isLoading = false;
 
   bool validateEmail(String email){
     for(int i = 0; i < email.length; i++){
@@ -37,17 +44,39 @@ class _SignInState extends State<SignIn>{
       ),
     );
   }
-  void handleSignIn(Setting setting){
-    if(email == "admin@email.com" && password == "admin"){
-      setLoginStatus();
+  void handleSignIn(Setting setting) async {
+    setState(() {
+      isLoading = true;
+    });
+    if(email == "" || password == ""){
+      showSnackBar(setting.language == "English" ? "Email and password cannot be empty." : 'Email và mật khẩu không được rỗng.');
+    }else if(!validateEmail(email)){
+      showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }
     else{
-      if(email == "" || password == ""){
-        showSnackBar(setting.language == "English" ? "Email and password cannot be empty." : 'Email và mật khẩu không được rỗng.');
-      }else if(!validateEmail(email)){
-        showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
+      var res = await http.post(Uri.parse("https://sandbox.api.lettutor.com/auth/login"),
+                      headers: {"Content-Type": "application/json"},
+                      body: jsonEncode({
+                          "email": email,
+                          "password": password
+                        })
+                      );
+      if(res.statusCode == 200){
+        var userTokens = UserTokens.fromJson(jsonDecode(res.body));
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('accessToken', jsonEncode(userTokens.tokens!.access!.toJson()));
+        prefs.setString('refreshToken', jsonEncode(userTokens.tokens!.refresh!.toJson()));
+
+        setState(() {
+          isLoading = false;
+        });
+
+        setLoginStatus();
       }
       else{
+        setState(() {
+          isLoading = false;
+        });
         showSnackBar(setting.language == "English" ? "Email or password incorrectly." : 'Email hoặc mật khẩu không đúng.');
       }
     }
@@ -71,10 +100,18 @@ class _SignInState extends State<SignIn>{
               width: 100,
               child: Image.asset('images/logo.png')
             ),
-            TextInput('Email','admin@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
+            isLoading ? 
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: const Center(
+                  child: CircularProgressIndicator()
+                )
+              )
+               : const SizedBox(height: 1, width: 1),
+            TextInput('Email','Email', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });} ),
-            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", 'admin', true, TextInputType.text, (String value){ setState(() {
+            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", setting.language == "English" ? 'Password' : "Mật khẩu", true, TextInputType.text, (String value){ setState(() {
               password = value;
             });} ),
             Container(
