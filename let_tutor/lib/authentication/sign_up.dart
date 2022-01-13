@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/authentication/social_signin.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
+
+import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
   @override
@@ -12,10 +16,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp>{
-  String name = "";
   String email= "";
   String password = "";
   String confirmPassword = "";
+  bool isLoading = false;
 
   bool validateEmail(String email){
     for(int i = 0; i < email.length; i++){
@@ -33,15 +37,39 @@ class _SignUpState extends State<SignUp>{
       ),
     );
   }
-  void handleSignUp(Setting setting){
-    if(email == "" || password == "" || name == "" || confirmPassword == ""){
+  void handleSignUp(Setting setting) async{
+    setState(() {
+      isLoading = true;
+    });
+
+    if(email == "" || password == "" || confirmPassword == ""){
       showSnackBar(setting.language == "English" ? "Informations cannot be empty." : 'Thông tin không được rỗng.');
     }else if(!validateEmail(email)){
       showSnackBar(setting.language == "English" ? "The email is not a valid email address." : 'Email không đúng định dạng.');
     }else if(password != confirmPassword){
       showSnackBar(setting.language == "English" ? "Confirm password incorrectly." : 'Nhập lại mật khẩu không đúng.');
     }else{
-      Navigator.pop(context);
+      var res = await http.post(Uri.parse("https://sandbox.api.lettutor.com/auth/register"),
+                      headers: {"Content-Type": "application/json"},
+                      body: jsonEncode({
+                          "email": email,
+                          "password": password,
+                          "source": ""
+                        })
+                      );
+      if(res.statusCode == 201){
+        setState(() {
+          isLoading = false;
+        });
+        showSnackBar(setting.language == "English" ? "Register successfully. Please check email to verify your email address." : 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.');
+        Navigator.pop(context);
+      }
+      else{
+        setState(() {
+          isLoading = false;
+        });
+        showSnackBar(setting.language == "English" ? "Error! Please try again." : 'Đã xảy ra lỗi! Vui lòng thử lại.');
+      }
     }
   }
 
@@ -60,9 +88,15 @@ class _SignUpState extends State<SignUp>{
         color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
-            TextInput(setting.language == "English" ? 'Full name' : "Họ tên", setting.language == "English" ? 'Full name' : "Họ tên", false, TextInputType.text, (String value) { setState(() {
-              name = value;
-            });}),
+            isLoading ? 
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: const Center(
+                  child: CircularProgressIndicator()
+                )
+              )
+               : Container(),
+               
             TextInput('Email', 'example@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });}),

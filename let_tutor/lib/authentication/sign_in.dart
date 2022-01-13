@@ -108,10 +108,10 @@ class _SignInState extends State<SignIn>{
                 )
               )
                : Container(),
-            TextInput('Email','Email', false, TextInputType.emailAddress, (String value){ setState(() {
+            TextInput('Email','example@email.com', false, TextInputType.emailAddress, (String value){ setState(() {
               email = value;
             });} ),
-            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", setting.language == "English" ? 'Password' : "Mật khẩu", true, TextInputType.text, (String value){ setState(() {
+            TextInput(setting.language == "English" ? 'Password' : "Mật khẩu", "******", true, TextInputType.text, (String value){ setState(() {
               password = value;
             });} ),
             Container(
