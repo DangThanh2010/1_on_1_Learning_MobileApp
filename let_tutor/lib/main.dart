@@ -11,7 +11,6 @@ import 'package:let_tutor/data_access/tutor_dao.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/model/booking_dto.dart';
 import 'package:let_tutor/model/comment_dto.dart';
-import 'package:let_tutor/model/course_dto.dart';
 import 'package:let_tutor/model/feedback_dto.dart';
 import 'package:let_tutor/model/language_dto.dart';
 import 'package:let_tutor/model/list_booking_dto.dart';
@@ -20,7 +19,6 @@ import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/specialty_dto.dart';
-import 'package:let_tutor/model/topic_dto.dart';
 import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/myapp.dart';
 import 'package:let_tutor/profile/profile.dart';
@@ -81,8 +79,6 @@ class App extends StatelessWidget{
 
   final List<LanguageDTO> listLanguage = listLanguageDTO;
   final List<SpecialtyDTO> listSpecialty = listSpecialtyDTO;
-  final List<CourseDTO> listCourse = listCourseDTO;
-  final List<TopicDTO> listTopic = listTopicDTO;
   final List<FeedbackDTO> listFeedback = listFeedbackDTO;
   final List<ScheduleDTO> listSchedule = listScheduleDTO;
   
@@ -105,8 +101,6 @@ class App extends StatelessWidget{
         ChangeNotifierProvider(create: (context) => setting),
         Provider(create: (context) => listLanguage),
         Provider(create: (context) => listSpecialty),
-        Provider(create: (context) => listCourse),
-        Provider(create: (context) => listTopic),
         Provider(create: (context) => listFeedback),
         Provider(create: (context) => listSchedule),
       ],

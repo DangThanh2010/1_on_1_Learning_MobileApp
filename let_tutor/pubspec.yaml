@@ -43,6 +43,8 @@ dependencies:
   json_annotation: ^4.4.0
   http: ^0.13.4
   video_player:
+  flutter_cached_pdfview: ^0.4.1
+  
 
 dev_dependencies:
   flutter_test:

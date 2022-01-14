@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:let_tutor/course_detail/pdf_view.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/topic_dto.dart';
 import 'package:provider/provider.dart';
 
 class Topic extends StatelessWidget {
@@ -15,7 +15,11 @@ class Topic extends StatelessWidget {
     Setting setting = context.watch<Setting>();
     
     return GestureDetector(
-      onTap: () { },
+      onTap: () {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SafeArea(child: PDFView(name, nameFile))),
+      );},
       child: Container(
         padding: const EdgeInsets.all(10),
         margin: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
