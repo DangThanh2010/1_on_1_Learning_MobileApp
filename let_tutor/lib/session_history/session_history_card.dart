@@ -127,7 +127,7 @@ class SessionHistoryCard extends StatelessWidget {
                 child:  GestureDetector(
                   onTap: () {Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(tutor.id))),
+                    MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(tutor.id.toString()))),
                   );},
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),

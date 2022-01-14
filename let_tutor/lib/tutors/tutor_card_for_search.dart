@@ -26,7 +26,7 @@ class TutorCardForSearch extends StatelessWidget {
     return GestureDetector(
       onTap: () {Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(int.parse(tutor.userId ?? "0")))),
+        MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(tutor.userId ?? "0"))),
       );},
       child: Card(
         color: setting.theme == "White" ? Colors.white : Colors.grey[800],

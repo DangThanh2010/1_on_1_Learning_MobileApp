@@ -1,28 +1,47 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/data/data.dart';
-import 'package:let_tutor/data_access/tutor_dao.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
-import 'package:let_tutor/model/comment_dto.dart';
-import 'package:let_tutor/model/language_dto.dart';
-import 'package:let_tutor/model/list_comment_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/specialty_dto.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
-import 'package:let_tutor/tutor_detail/booking_dialog.dart';
+import 'package:let_tutor/model/token.dart';
+import 'package:let_tutor/model/tutor_detail_info.dart';
 import 'package:let_tutor/tutor_detail/comment.dart';
 import 'package:let_tutor/tutor_detail/icon_text.dart';
 import 'package:let_tutor/tutor_detail/intro.dart';
 import 'package:let_tutor/tutor_detail/report_dialog.dart';
+import 'package:let_tutor/tutor_detail/video.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class TutorDetail extends StatelessWidget {
   TutorDetail(this.id);
   
-  final int id;
+  final String id;
+
+  Future<TutorDetailInfo> fetchTutor () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.get(Uri.parse(APILINK + "tutor/" + id),
+                headers: {
+                  "Content-Type": "application/json",
+                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+                });
+    if(res.statusCode == 200){
+      var tutor = TutorDetailInfo.fromJson(jsonDecode(res.body));  
+      return tutor;
+    }else {
+      return TutorDetailInfo();
+    }
+  }
 
   Widget titleName(String title){
     return Container(
@@ -31,22 +50,11 @@ class TutorDetail extends StatelessWidget {
     );
   } 
 
-  List<Widget> generateLanguageTags(List<LanguageDTO> listLanguage){
+  List<Widget> generateTags(data){
     List<Tag> tags = [];
-    for(int j = 0; j < listLanguage.length; j++){
-      if(id == listLanguage[j].idTutor){
-        tags.add(Tag(listLanguage[j].language, true));
-      }
-    }
-    return tags;
-  }
-
-  List<Widget> generateSpecialtyTags(List<SpecialtyDTO> listSpecialty){
-    List<Tag> tags = [];
-    for(int j = 0; j < listSpecialty.length; j++){
-      if(id == listSpecialty[j].idTutor){
-        tags.add(Tag(listSpecialty[j].specialty, true));
-      }
+    var list = data.split(',');
+    for(int j = 0; j < list.length; j++){
+      tags.add(Tag(list[j], true));
     }
     return tags;
   }
@@ -55,12 +63,10 @@ class TutorDetail extends StatelessWidget {
     return (dateTime.hour < 10 ? ('0' + dateTime.hour.toString()) : dateTime.hour.toString()) + ':' + (dateTime.minute < 10 ? ('0' + dateTime.minute.toString()) : dateTime.minute.toString()) + ':' + (dateTime.second < 10 ? ('0' + dateTime.second.toString()) : dateTime.second.toString()) + ', ' + (dateTime.day < 10 ? ('0' + dateTime.day.toString()) : dateTime.day.toString()) + '/' + (dateTime.month < 10 ? ('0' + dateTime.month.toString()) : dateTime.month.toString()) + '/' + dateTime.year.toString();
   }
 
-  List<Widget> generateComments(List<CommentDTO> listComment){
+  List<Widget> generateComments(listComment){
     List<Widget> comments = [];
     for(int j = 0; j < listComment.length; j++){
-      if(id == listComment[j].idTutor){
-        comments.add(Comment(const AssetImage('images/avatar.jpg'), 'April Corpuz', listComment[j].star, listComment[j].comment, dateTimeToString(listComment[j].dateTime)));
-      }
+        comments.add(Comment(NetworkImage(listComment[j].firstInfo.avatar), listComment[j].firstInfo.name, listComment[j].rating, listComment[j].content, listComment[j].createdAt));
     }
     return comments;
   }
@@ -78,13 +84,6 @@ class TutorDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
-    ListCommentDTO comments = context.watch<ListCommentDTO>();
-    List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
-    List<SpecialtyDTO> specialties = context.watch<List<SpecialtyDTO>>();
-    TutorDTO? tutor = tutors.getTutor(id);
-    int star = comments.getRateForTutor(id);
-    List<ScheduleDTO> schedules = context.watch<List<ScheduleDTO>>();
     Setting setting = context.watch<Setting>();
 
     void showSnackBar(String content){
@@ -94,126 +93,140 @@ class TutorDetail extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
     );
-  }
+    }
     
     return Scaffold(
-      body: Container(
-        color: setting.theme == "White" ? Colors.white : Colors.black,
-        child: ListView(
-          children: [
-            Container(
-              height: 120,
-              decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-              child: Center(
-                child: Text(
-                  'Video',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
-                  )
+      body: FutureBuilder<TutorDetailInfo>(
+        future: fetchTutor(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return  Container(
+              margin: const EdgeInsets.only(top: 10),
+              child: const Center(
+                child: CircularProgressIndicator()
               )
-            ),
-
-            Intro(AssetImage(tutor!.avatar), tutor.name, tutor.nation, star, tutor.isFavourite, () async{ 
-              TutorDAO tutorDAO = TutorDAO();
-              if(tutor.isFavourite){
-                await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, false, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
-                tutors.setNotFavourite(id);
-              }else{
-                await tutorDAO.update(id, TutorDTO(id, tutor.avatar, tutor.name, tutor.nation, true, tutor.introduction, tutor.education, tutor.experience, tutor.interests, tutor.profession));
-                tutors.setFavourite(id);
-              }
-            }),
-
-            Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return BookingDialog(getSchedule(schedules), showSnackBar);
-                }
+            );
+          }
+          if (snapshot.hasData) {
+            if(snapshot.data.userId == null){
+              return Container(
+                alignment: Alignment.center,
+                child: Center(
+                  child: Text(setting.language == "English" ? 'Error.' : 'Đã xảy ra lỗi.',
+                      style: TextStyle(fontWeight: FontWeight.bold,
+                                        color: setting.theme == "White" ? Colors.black : Colors.white, ),)
+                )
               );
-            }),
-
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+            }
+            return Container(
+              color: setting.theme == "White" ? Colors.white : Colors.black,
+              child: ListView(
                 children: [
-                   IconText(Icons.chat, setting.language == "English" ? 'Message' : "Nhắn tin", () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SafeArea(child: MessageDetail())),
-                  );},),
-                   IconText(Icons.report, setting.language == "English" ? 'Report' : "Báo cáo", () {
-                     showDialog(
+                  SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Video(snapshot.data.video)
+                    )
+                  ),
+
+                  Intro(NetworkImage(snapshot.data.User.avatar ?? ""), snapshot.data.User.name, snapshot.data.User.country, snapshot.data.avgRating.ceil(), snapshot.data.isFavorite, () async{ 
+                   
+                  }),
+
+                  Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
+                    /*showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return ReportDialog(tutor.name); 
+                        return BookingDialog(getSchedule(schedules), showSnackBar);
                       }
-                    );
-                  },)
-                ],
-              ) 
-            ),
+                    );*/
+                  }),
 
-            Container(
-              margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: Text(
-                tutor.introduction,
-                style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
-              ) 
-            ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconText(Icons.chat, setting.language == "English" ? 'Message' : "Nhắn tin", () {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SafeArea(child: MessageDetail())),
+                        );},),
+                        IconText(Icons.report, setting.language == "English" ? 'Report' : "Báo cáo", () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ReportDialog(snapshot.data.User.name); 
+                            }
+                          );
+                        },)
+                      ],
+                    ) 
+                  ),
 
-            titleName(setting.language == "English" ? 'Languages' : 'Ngôn ngữ'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child:  SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: generateLanguageTags(languages)
-                ),
-              )
-            ),
-           
-            titleName(setting.language == "English" ? 'Education' : 'Học vấn'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.education, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
-            ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Text(
+                      snapshot.data.bio,
+                      style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)
+                    ) 
+                  ),
 
-            titleName(setting.language == "English" ? 'Experience' : 'Kinh nghiệm'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.experience, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
-            ),
+                  titleName(setting.language == "English" ? 'Languages' : 'Ngôn ngữ'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child:  SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: generateTags(snapshot.data.languages)
+                      ),
+                    )
+                  ),
+                
+                  titleName(setting.language == "English" ? 'Education' : 'Học vấn'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child: Text(snapshot.data.education, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
+                  ),
 
-            titleName(setting.language == "English" ? 'Interests' : 'Sở thích'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.interests, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
-            ),
+                  titleName(setting.language == "English" ? 'Experience' : 'Kinh nghiệm'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child: Text(snapshot.data.experience, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
+                  ),
 
-            titleName(setting.language == "English" ? 'Profession' : 'Nghề nghiệp'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child: Text(tutor.profession, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
-            ),
+                  titleName(setting.language == "English" ? 'Interests' : 'Sở thích'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child: Text(snapshot.data.interests, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
+                  ),
 
-            titleName(setting.language == "English" ? 'Specialties' : 'Chuyên môn'),
-            Container(
-              margin: const EdgeInsets.only( left: 20, right: 20),
-              child:  SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: generateSpecialtyTags(specialties)
-                ),
-              )
-            ),
+                  titleName(setting.language == "English" ? 'Profession' : 'Nghề nghiệp'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child: Text(snapshot.data.profession, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white))
+                  ),
 
-            titleName(setting.language == "English" ? 'Rating and Comment (${comments.getLengthForTutor(tutor.id)})' : 'Đánh giá và bình luận (${comments.getLengthForTutor(tutor.id)})'),
-          ] + generateComments(comments.list),
-        ),
+                  titleName(setting.language == "English" ? 'Specialties' : 'Chuyên môn'),
+                  Container(
+                    margin: const EdgeInsets.only( left: 20, right: 20),
+                    child:  SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: generateTags(snapshot.data.specialties)
+                      ),
+                    )
+                  ),
+
+                  titleName(setting.language == "English" ? 'Rating and Comment (${snapshot.data.User.feedbacks.length})' : 'Đánh giá và bình luận (${snapshot.data.User.feedbacks.length})'),
+                ] + generateComments(snapshot.data.User.feedbacks),
+              ),
+            );
+          }
+          return Container();
+        },
       )
     );
   }
