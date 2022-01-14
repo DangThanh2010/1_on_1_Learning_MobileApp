@@ -108,42 +108,42 @@ class _BecomeATutorState extends State<BecomeATutor>{
               child: Text(setting.language == "English" ? 'My specialties are' : "Chuyên môn của tôi là", style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),)
             ),
 
-            CheckBox('English for Kids',(String title){ setState(() {
+            CheckBox(false,'English for Kids',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('Business English',(String title){ setState(() {
+            CheckBox(false,'Business English',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('Conversational English',(String title){ setState(() {
+            CheckBox(false,'Conversational English',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('TOEIC',(String title){ setState(() {
+            CheckBox(false,'TOEIC',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('TOEFL',(String title){ setState(() {
+            CheckBox(false,'TOEFL',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('IELTS', (String title){ setState(() {
+            CheckBox(false,'IELTS', (String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('PET',(String title){ setState(() {
+            CheckBox(false,'PET',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);
             });}),
-            CheckBox('KET',(String title){ setState(() {
+            CheckBox(false,'KET',(String title){ setState(() {
               specialties.add(title);
             });}, (String title) { setState(() {
               specialties.remove(title);

@@ -28,6 +28,14 @@ class _SelectedInputState extends State<SelectedInput> {
   void initState() {
     super.initState();
     currentValue = selections[0];
+    for(var i = 0; i < selections.length; i++)
+    {
+      if(hint == selections[i]){
+        currentValue = selections[i];
+        break;
+      }
+    }
+    
   }
 
   @override

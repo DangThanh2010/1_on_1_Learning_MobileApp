@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:let_tutor/model/feedback_detail.dart';
 import 'package:let_tutor/model/learn_topic.dart';
 import 'package:let_tutor/model/wallet_info.dart';
 
@@ -17,13 +18,15 @@ class User {
   String? birthday;
   bool? isActivated;
   WalletInfo? walletInfo;
+  List<FeedbackDetail>? feedbacks;
   //List<Null>? courses;
   //Null? requireNote;
   String? level;
   List<LearnTopic>? learnTopics;
-  //List<Null>? testPreparations;
+  List<LearnTopic>? testPreparations;
   bool? isPhoneActivated;
   int? timezone;
+  int? avgRating;
 
   User(
       {this.id,
@@ -37,13 +40,15 @@ class User {
       this.birthday,
       this.isActivated,
       this.walletInfo,
+      this.feedbacks,
       //this.courses,
       //this.requireNote,
       this.level,
       this.learnTopics,
-      //this.testPreparations,
+      this.testPreparations,
       this.isPhoneActivated,
-      this.timezone});
+      this.timezone,
+      this.avgRating});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
