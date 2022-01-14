@@ -1,41 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/global_widget/tag.dart';
-import 'package:let_tutor/model/language_dto.dart';
-import 'package:let_tutor/model/list_comment_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
+import 'package:let_tutor/model/tutor.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:provider/provider.dart';
 
 class TutorCardForSearch extends StatelessWidget {
-  TutorCardForSearch(this.id);
+  TutorCardForSearch(this.tutor);
 
-  final int id;
+  final Tutor tutor;
 
-  List<Widget> generateLanguageTags(List<LanguageDTO> listLanguage){
+  List<Widget> generateLanguageTags(){
     List<Tag> tags = [];
+    var listLanguage = tutor.languages!.split(',');
     for(int j = 0; j < listLanguage.length; j++){
-      if(id == listLanguage[j].idTutor){
-        tags.add(Tag(listLanguage[j].language, true));
-      }
+      tags.add(Tag(listLanguage[j], true));
     }
     return tags;
   }
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
-    List<LanguageDTO> languages = context.watch<List<LanguageDTO>>();
-    ListCommentDTO comments = context.watch<ListCommentDTO>();
-    TutorDTO? tutor = tutors.getTutor(id);
-    int star = comments.getRateForTutor(id);
     Setting setting = context.watch<Setting>();
     
     return GestureDetector(
       onTap: () {Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(id))),
+        MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(int.parse(tutor.userId ?? "0")))),
       );},
       child: Card(
         color: setting.theme == "White" ? Colors.white : Colors.grey[800],
@@ -53,7 +44,7 @@ class TutorCardForSearch extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage(tutor!.avatar),
+                      image: NetworkImage(tutor.avatar ?? ""),
                     )
                   ),
                 ),
@@ -63,7 +54,7 @@ class TutorCardForSearch extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
+                          Text(tutor.name ?? "No name", style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                           Expanded(
                             child: 
                             Container (
@@ -71,8 +62,8 @@ class TutorCardForSearch extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text('${star}', style: TextStyle(color: Colors.red),),
-                                  Icon(Icons.star_rate, color: Colors.yellow,),    
+                                  Text('${(tutor.avgRating() * 100).floor() / 100}', style: TextStyle(color: Colors.red),),
+                                  const Icon(Icons.star_rate, color: Colors.yellow,),    
                                 ],
                               )
                             )
@@ -86,7 +77,7 @@ class TutorCardForSearch extends StatelessWidget {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: generateLanguageTags(languages)
+                            children: generateLanguageTags()
                           )
                         )
                       )
@@ -101,7 +92,7 @@ class TutorCardForSearch extends StatelessWidget {
               alignment: Alignment.topLeft,
               height: 68,
               child: Text(
-                tutor.introduction,
+                tutor.bio ?? " ",
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)

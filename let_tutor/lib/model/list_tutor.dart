@@ -13,6 +13,9 @@ class ListTutor {
   ListTutor({this.tutors, this.favoriteTutor});
 
   bool checkFavoriteTutor(String? id){
+    if(favoriteTutor == null){
+      return false;
+    }
     for(var i = 0; i < favoriteTutor!.length; i++)
     {
       if(favoriteTutor![i].secondId == id){

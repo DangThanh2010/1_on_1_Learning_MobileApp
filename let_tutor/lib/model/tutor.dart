@@ -12,9 +12,10 @@ class Tutor {
   String? userId;
   String? bio;
   String? languages;
+  String? specialties;
 
   double avgRating(){
-    if(feedbacks == null || feedbacks!.length == 0){
+    if(feedbacks == null || feedbacks!.isEmpty){
       return 0;
     }
     double result = 0;
@@ -24,7 +25,7 @@ class Tutor {
     return result/feedbacks!.length;
   }
  
-  Tutor({this.avatar, this.name, this.country, this.feedbacks, this.userId, this.bio,});
+  Tutor({this.avatar, this.name, this.country, this.feedbacks, this.userId, this.bio, this.languages, this.specialties});
 
   factory Tutor.fromJson(Map<String, dynamic> json) => _$TutorFromJson(json);
 

@@ -81,7 +81,7 @@ class Home extends StatelessWidget {
     if (list.checkFavoriteTutor(a.userId) == false && list.checkFavoriteTutor(b.userId) == true){
       return 1;
     }
-    return (b.avgRating().ceil() - a.avgRating().ceil()); 
+    return ((b.avgRating() - a.avgRating()).isNegative ? -1 : 1); 
   }
 
   @override
@@ -222,6 +222,26 @@ class Home extends StatelessWidget {
                   );
                 }
                 if (snapshot.hasData) {
+                  if(snapshot.data.tutors == null){
+                    return Container(
+                      alignment: Alignment.center,
+                      child: Center(
+                        child: Text(setting.language == "English" ? 'Error.' : 'Đã xảy ra lỗi.',
+                                    style: TextStyle(fontWeight: FontWeight.bold,
+                                                    color: setting.theme == "White" ? Colors.black : Colors.white, ),)
+                      )
+                    );
+                  }
+                  if(snapshot.data.tutors.rows.length == 0){
+                    return Container(
+                      alignment: Alignment.center,
+                      child: Center(
+                        child: Text(setting.language == "English" ? 'No data.' : 'Không có dữ liệu.',
+                                    style: TextStyle(fontWeight: FontWeight.bold,
+                                                    color: setting.theme == "White" ? Colors.black : Colors.white, ),)
+                      )
+                    );
+                  }
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCard(e, snapshot.data)).toList()

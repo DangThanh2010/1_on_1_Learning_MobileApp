@@ -15,7 +15,9 @@ Tutor _$TutorFromJson(Map<String, dynamic> json) => Tutor(
           .toList(),
       userId: json['userId'] as String?,
       bio: json['bio'] as String?,
-    )..languages = json['languages'] as String?;
+      languages: json['languages'] as String?,
+      specialties: json['specialties'] as String?,
+    );
 
 Map<String, dynamic> _$TutorToJson(Tutor instance) => <String, dynamic>{
       'avatar': instance.avatar,
@@ -25,4 +27,5 @@ Map<String, dynamic> _$TutorToJson(Tutor instance) => <String, dynamic>{
       'userId': instance.userId,
       'bio': instance.bio,
       'languages': instance.languages,
+      'specialties': instance.specialties,
     };

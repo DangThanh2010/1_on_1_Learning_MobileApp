@@ -8,7 +8,7 @@ import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/settings/settings.dart';
-import 'package:let_tutor/tutors/tutors.dart';
+import 'package:let_tutor/tutors/tutors_page.dart';
 import 'package:let_tutor/upcoming/upcoming.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
       return Upcoming();
     }
     else if(selectedIndex == 3){
-      return Tutors();
+      return TutorsPage();
     }
     else if(selectedIndex == 4){
       return Courses();
