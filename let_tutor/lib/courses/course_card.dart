@@ -28,10 +28,10 @@ class CourseCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        /*Navigator.push(
+        Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SafeArea(child: CourseDetail(course))),
-      );*/},
+        MaterialPageRoute(builder: (context) => SafeArea(child: CourseDetail(course.id ?? "0"))),
+      );},
       child: Card(
         color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),

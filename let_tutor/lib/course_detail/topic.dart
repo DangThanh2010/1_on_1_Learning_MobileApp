@@ -4,17 +4,18 @@ import 'package:let_tutor/model/topic_dto.dart';
 import 'package:provider/provider.dart';
 
 class Topic extends StatelessWidget {
-  Topic(this.number, this.topic);
+  Topic(this.number, this.name, this.nameFile);
 
   final int number;
-  final TopicDTO topic;
+  final String name;
+  final String nameFile;
 
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
     
     return GestureDetector(
-      onTap: () {},
+      onTap: () { },
       child: Container(
         padding: const EdgeInsets.all(10),
         margin: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
@@ -36,7 +37,7 @@ class Topic extends StatelessWidget {
               child: Center(child: Text('${number}', style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),),),
             ),
 
-            Text(topic.name, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white, fontWeight: FontWeight.bold),)
+            Text(name, style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white, fontWeight: FontWeight.bold),)
           ],
         ),
       )

@@ -38,7 +38,6 @@ class _CoursesState extends State<Courses>{
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
