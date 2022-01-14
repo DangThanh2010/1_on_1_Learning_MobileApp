@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:let_tutor/course_detail/course_detail.dart';
-import 'package:let_tutor/model/course_dto.dart';
+import 'package:let_tutor/model/course.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:provider/provider.dart';
 
 class CourseCard extends StatelessWidget {
   CourseCard(this.course);
 
-  final CourseDTO course;
+  final Course course;
+
+  final List<String> level = ["Any Level", "Beginner", "Upper-Beginner", "Pre-Intermediate", "Intermediate", "Upper-Intermediate",
+                                "Pre-advanced", "Advanced", "Very advanced"];
+
+  dynamic renderImage () {
+    try {
+      var res = NetworkImage(course.imageUrl ?? "");
+      return res;
+    }
+    catch (e) {
+      return AssetImage("images/course_picture.png");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
 
     return GestureDetector(
-      onTap: () {Navigator.push(
+      onTap: () {
+        /*Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SafeArea(child: CourseDetail(course))),
-      );},
+      );*/},
       child: Card(
         color: setting.theme == "White" ? Colors.white : Colors.grey[800],
         margin: const EdgeInsets.only(top:10, left: 20, right: 20, bottom: 10),
@@ -31,7 +45,7 @@ class CourseCard extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage(course.picture),
+                  image: renderImage()
                 )
               ),
             ),
@@ -39,7 +53,7 @@ class CourseCard extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: Text(
-                course.name,
+                course.name ?? "",
                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                 maxLines: null,
               ),
@@ -48,7 +62,7 @@ class CourseCard extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: Text(
-                course.about,
+                course.description ?? "",
                 style: TextStyle(color: setting.theme == "White" ? Colors.grey : Colors.white),
               ),
             ),
@@ -56,7 +70,7 @@ class CourseCard extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: Text(
-                setting.language == "English" ?  course.level + ' - ' + '${course.length} Lessons' :  course.level + ' - ' + '${course.length} bài',
+                setting.language == "English" ?  level[int.parse(course.level ?? "0")] + ' - ' + '${course.topics!.length} Lessons' :  level[int.parse(course.level ?? "0")] + ' - ' + '${course.topics!.length} bài',
                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
               ),
             ),

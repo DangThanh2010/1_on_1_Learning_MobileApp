@@ -41,7 +41,7 @@ class _TutorsPageState extends State<TutorsPage>{
     final prefs = await SharedPreferences.getInstance();
     Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
 
-    var res = await http.get(Uri.parse(APILINK + "tutor/more?perPage=9&page=" + page.toString()),
+    var res = await http.get(Uri.parse(APILINK + "tutor/more?perPage=5&page=" + page.toString()),
                 headers: {
                   "Content-Type": "application/json",
                   HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
@@ -115,8 +115,15 @@ class _TutorsPageState extends State<TutorsPage>{
               child: CupertinoSearchTextField(
                 onSubmitted: (value){
                   setState(() {
-                  searchValue = value;
+                    searchValue = value;
                   });
+                },
+                onChanged: (value){
+                  if(value == ""){
+                    setState(() {
+                      searchValue = value;
+                    });
+                  }
                 },
                 backgroundColor: setting.theme == "White" ? Colors.grey[200] : Colors.grey,
                 itemColor: setting.theme == "White" ? Colors.black : Colors.white,
@@ -183,39 +190,40 @@ class _TutorsPageState extends State<TutorsPage>{
                         );
                       }
                       return ListView(
-                        children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCardForSearch(e)).toList()
+                        children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCardForSearch(e)).toList() + 
+                        [searchValue != "" ? Container() :
+                          Container(
+                            margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                            child: Row(
+                              children: [
+                                page > 1 ?
+                                TextButton(
+                                  onPressed: (){ setState(() {
+                                    page = page - 1;
+                                  });},
+                                  child: Text(setting.language == "English" ? '< Pre-page' : '< Trang trước')
+                                ) : Container(),
+                                snapshot.data.tutors.count > page*5 ? 
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: (){ setState(() {
+                                        page = page + 1;
+                                      });},
+                                      child: Text(setting.language == "English" ? 'Next page >' : 'Trang sau >')
+                                    )
+                                  )
+                                ): Container(),
+                              ]
+                            )
+                          ),]
                       );
                     }
                     return Container();
                   },
                 )
               ),
-            searchValue != "" ? Container() :
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: Row(
-                children: [
-                  page > 1 ?
-                  TextButton(
-                    onPressed: (){ setState(() {
-                      page = page - 1;
-                    });},
-                    child: Text(setting.language == "English" ? '< Pre-page' : '< Trang trước')
-                  ) : Container(),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: (){ setState(() {
-                          page = page + 1;
-                        });},
-                        child: Text(setting.language == "English" ? 'Next page >' : 'Trang sau >')
-                      )
-                    )
-                  ),
-                ]
-              )
-            ),
           ],
         ),
       )

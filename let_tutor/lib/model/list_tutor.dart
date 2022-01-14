@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:let_tutor/model/favorite_tutor.dart';
-import 'package:let_tutor/model/tutor.dart';
 import 'package:let_tutor/model/tutors.dart';
 
 part 'list_tutor.g.dart';
