@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/config.dart';
 import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
-import 'package:let_tutor/model/booking_dto.dart';
-import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
@@ -38,16 +36,16 @@ class Home extends StatelessWidget {
       return ListTutor();
     }
   }
-
+  /*
   int getTimeToLearn(ListBookingDTO bookings){
     int result = 0;
     for(int i = 0; i < bookings.list.length; i++){
       if(bookings.list[i].end.compareTo(DateTime.now()) < 0 && bookings.list[i].isCancel == false){
-        result += bookings.list[i].end.difference(bookings.list[i].start).inSeconds;
+        //result += bookings.list[i].end.difference(bookings.list[i].start).inSeconds;
       }
     }
     return result;
-  }
+  }*/
 
   String timeToLearnToString(int seconds, Setting setting){
     int second = seconds % 60;
@@ -59,6 +57,7 @@ class Home extends StatelessWidget {
     return result;
   }
 
+/*
   List<BookingDTO> getListUpcoming(ListBookingDTO bookings){
     List<BookingDTO> result = [];
     for(int i = 0; i < bookings.list.length; i++){
@@ -72,6 +71,7 @@ class Home extends StatelessWidget {
   String dateOfUpcomingToString(BookingDTO booking){
     return (booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString();
   }
+  */
 
   int sortTutor(Tutor a, Tutor b, ListTutor list){
 
@@ -86,7 +86,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ListBookingDTO bookings = context.watch<ListBookingDTO>();
+    
     Setting setting = context.watch<Setting>();
 
     return  Scaffold(
@@ -127,7 +127,7 @@ class Home extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 10),
                       child: 
                       Text(
-                        setting.language == "English" ? 'Total lesson time is ${timeToLearnToString(getTimeToLearn(bookings), setting)}' : 'Tổng thời gian đã học ${timeToLearnToString(getTimeToLearn(bookings), setting)}',
+                        setting.language == "English" ? 'Total lesson time is ' : 'Tổng thời gian đã học ',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 15,
@@ -149,7 +149,7 @@ class Home extends StatelessWidget {
                         ),
                       )
                     ),
-                    
+                    /*
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: getListUpcoming(bookings).isNotEmpty ?  [
@@ -177,6 +177,7 @@ class Home extends StatelessWidget {
                         ), 
                       ],
                     ),
+                    */
                     Container(
                       margin: const EdgeInsets.only(top: 10),
                       child: WhiteButton(setting.language == "English" ? 'Book more' : 'Đặt lịch', (){ setSelectedIndex(3); })

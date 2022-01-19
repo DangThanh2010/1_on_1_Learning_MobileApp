@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
-import 'package:let_tutor/model/list_booking_dto.dart';
 import 'package:let_tutor/model/list_schedule.dart';
 import 'package:let_tutor/model/schedule.dart';
 import 'package:let_tutor/model/setting.dart';
@@ -61,7 +60,7 @@ class BookingDialog extends StatelessWidget{
     return result;
   }
 
-  Widget setupContent(String idTutor, ListBookingDTO bookings, context, Setting setting) {
+  Widget setupContent(String idTutor, context, Setting setting) {
     return(
       FutureBuilder<ListSchedule>(
         future: getSchedules(idTutor),
@@ -115,7 +114,6 @@ class BookingDialog extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
-    ListBookingDTO bookings = context.watch<ListBookingDTO>();
 
     return AlertDialog(  
       backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800], 
@@ -123,7 +121,7 @@ class BookingDialog extends StatelessWidget{
         child: Text(setting.language == "English" ? 'Pick your schedule' : 'Hãy chọn lịch học bạn muốn',
                     style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
       ),
-      content: setupContent(idTutor, bookings, context, setting),
+      content: setupContent(idTutor, context, setting),
     );
   }
 }

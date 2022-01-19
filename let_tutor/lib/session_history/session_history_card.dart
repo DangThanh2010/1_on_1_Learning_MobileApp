@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:let_tutor/model/booking_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/booking_info.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:let_tutor/session_history/give_feedback_dialog.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +8,7 @@ import 'package:provider/provider.dart';
 class SessionHistoryCard extends StatelessWidget {
   SessionHistoryCard(this.booking);
 
-  final BookingDTO booking;
+  final BookingInfo booking;
 
   String getTimeToLearn(DateTime start, DateTime end){
     int seconds = end.difference(start).inSeconds;
@@ -25,9 +23,10 @@ class SessionHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
-    TutorDTO? tutor = tutors.getTutor(booking.idTutor);
     Setting setting = context.watch<Setting>();
+
+    DateTime start = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.startPeriodTimestamp! * 1000, isUtc: false);
+    DateTime end = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.endPeriodTimestamp! * 1000, isUtc: false);
 
     return Card(
       color: setting.theme == "White" ? Colors.white : Colors.grey[800],
@@ -45,7 +44,7 @@ class SessionHistoryCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(tutor!.avatar),
+                    image: NetworkImage(booking.scheduleDetailInfo!.scheduleInfo!.tutorInfo!.avatar!),
                   )
                 ),
               ),
@@ -54,14 +53,14 @@ class SessionHistoryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
+                    Text(booking.scheduleDetailInfo!.scheduleInfo!.tutorInfo!.name!, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
 
                     Row(
                       children: [
                         Icon(Icons.calendar_today_outlined, color: setting.theme == "White" ? Colors.black : Colors.white),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString(),
+                          child: Text((start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()) + ':' + (start.second < 10 ? ('0' + start.second.toString()) : start.second.toString()) + ', ' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString()) + '/' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '/' + start.year.toString(),
                                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                           )
                         )
@@ -73,18 +72,7 @@ class SessionHistoryCard extends StatelessWidget {
                         Icon(Icons.schedule_outlined, color: setting.theme == "White" ? Colors.black : Colors.white),
                         Container(
                           margin: const EdgeInsets.only(left: 5),
-                          child: Text(getTimeToLearn(booking.start, booking.end), style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
-                        )
-                      ]
-                    ),
-
-                    Row(
-                      children: [
-                        Icon(Icons.star_outline, color: setting.theme == "White" ? Colors.black : Colors.white),
-                        Container(
-                          margin: const EdgeInsets.only(left: 5),
-                          child: Text(booking.isFeedbacked ? (setting.language == "English" ? 'You feedbacked this session' : "Bạn đã đánh giá") : (setting.language == "English" ? 'Not feedback yet' : "Bạn chưa đánh giá"),
-                                 style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
+                          child: Text(getTimeToLearn(start, end), style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
                         )
                       ]
                     ),
@@ -99,12 +87,14 @@ class SessionHistoryCard extends StatelessWidget {
               Expanded(
                 child:  GestureDetector(
                   onTap: () {
+                    /*
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return GiveFeedbackDialog(tutor.name, tutor.id, booking.id);              
                       }
                     );
+                    */
                   },
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
@@ -127,7 +117,7 @@ class SessionHistoryCard extends StatelessWidget {
                 child:  GestureDetector(
                   onTap: () {Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(tutor.id.toString()))),
+                    MaterialPageRoute(builder: (context) => SafeArea(child: TutorDetail(booking.scheduleDetailInfo!.scheduleInfo!.tutorId!))),
                   );},
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
