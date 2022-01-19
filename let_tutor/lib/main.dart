@@ -44,7 +44,7 @@ class App extends StatelessWidget{
           "/profile": (context) => SafeArea(child: Profile()),
           "/video_conference": (context) => SafeArea(child: VideoCoference()),
           "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
-          //"/feedback_list": (context) => SafeArea(child: FeedbackList()),
+          "/feedback_list": (context) => SafeArea(child: FeedbackList()),
           "/session_history": (context) => SafeArea(child: SessionHistory()),
           "/advanced_settings": (context) => SafeArea(child: AdvancedSettings()),
         },

@@ -1,20 +1,19 @@
-/*import 'package:flutter/material.dart';
-import 'package:let_tutor/model/feedback_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:flutter/material.dart';
+import 'package:let_tutor/model/feedback_detail.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:provider/provider.dart';
 
 class FeedbackListCard extends StatelessWidget {
   FeedbackListCard(this.feedback);
 
-  final FeedbackDTO feedback;
+  final FeedbackDetail feedback;
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
-    TutorDTO? tutor = tutors.getTutor(feedback.idSender);
+
     Setting setting = context.watch<Setting>();
+
+    DateTime dateTime = DateTime.parse(feedback.createdAt!);
 
     return Card(
       color: setting.theme == "White" ? Colors.white : Colors.grey[800],
@@ -32,7 +31,7 @@ class FeedbackListCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(tutor!.avatar),
+                    image: NetworkImage(feedback.firstInfo!.avatar!)
                   )
                 ),
               ),
@@ -41,10 +40,10 @@ class FeedbackListCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
+                    Text(feedback.firstInfo!.name!, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                     Row(
                       children: [
-                        Text((feedback.dateTime.hour < 10 ? ('0' + feedback.dateTime.hour.toString()) : feedback.dateTime.hour.toString()) + ':' + (feedback.dateTime.minute < 10 ? ('0' + feedback.dateTime.minute.toString()) : feedback.dateTime.minute.toString()) + ':' + (feedback.dateTime.second < 10 ? ('0' + feedback.dateTime.second.toString()) : feedback.dateTime.second.toString()) + ', ' + (feedback.dateTime.day < 10 ? ('0' + feedback.dateTime.day.toString()) : feedback.dateTime.day.toString()) + '/' + (feedback.dateTime.month < 10 ? ('0' + feedback.dateTime.month.toString()) : feedback.dateTime.month.toString()) + '/' + feedback.dateTime.year.toString(),
+                        Text((dateTime.hour < 10 ? ('0' + dateTime.hour.toString()) : dateTime.hour.toString()) + ':' + (dateTime.minute < 10 ? ('0' + dateTime.minute.toString()) : dateTime.minute.toString()) + ':' + (dateTime.second < 10 ? ('0' + dateTime.second.toString()) : dateTime.second.toString()) + ', ' + (dateTime.day < 10 ? ('0' + dateTime.day.toString()) : dateTime.day.toString()) + '/' + (dateTime.month < 10 ? ('0' + dateTime.month.toString()) : dateTime.month.toString()) + '/' + dateTime.year.toString(),
                               style: const TextStyle(color: Colors.red),),
                         Expanded(
                           child: 
@@ -53,7 +52,7 @@ class FeedbackListCard extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text('${feedback.star}', style: const TextStyle(color: Colors.red),),
+                                Text('${feedback.rating}', style: const TextStyle(color: Colors.red),),
                                 const Icon(Icons.star_rate, color: Colors.yellow,),    
                               ],
                             )
@@ -72,7 +71,7 @@ class FeedbackListCard extends StatelessWidget {
             padding: const EdgeInsets.all(5),
             alignment: Alignment.topLeft,
             child: Text(
-              feedback.comment,
+              feedback.content!,
               maxLines: null,
               style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
             ),
@@ -94,4 +93,4 @@ class FeedbackListCard extends StatelessWidget {
       ),
     );
   }
-}*/
+}
