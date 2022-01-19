@@ -11,6 +11,7 @@ import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/tutor.dart';
+import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 
 import 'package:http/http.dart' as http;
@@ -224,7 +225,22 @@ class _HomeState extends State<Home>{
                                     )
                                   )
                                 ), 
-                                WhiteButton(setting.language == "English" ? 'Enter lesson room' : 'Vào lớp', (){ Navigator.pushNamed(context, "/video_conference");})
+                                WhiteButton(setting.language == "English" ? 'Enter lesson room' : 'Vào lớp', (){ 
+                                  String link = snapshot.data.rows[0].studentMeetingLink!;
+                                  String token = link.split('=')[1];
+                                  String b64 = token.split('.')[1];
+
+                                  List<int> res = base64.decode(base64.normalize(b64));
+
+                                  Map<String,dynamic> info = jsonDecode(utf8.decode(res));
+
+                                  DateTime start = DateTime.fromMicrosecondsSinceEpoch(snapshot.data.rows[0].scheduleDetailInfo!.startPeriodTimestamp! * 1000, isUtc: false);
+                                  
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SafeArea(child: VideoConference(info['room'], token, info['context']['user']['name'] ?? "", info['context']['user']['email'], start ))),
+                                ); 
+                                })
                               ] 
                             )
                           );     

@@ -6,6 +6,7 @@ import 'package:let_tutor/config.dart';
 import 'package:let_tutor/model/booking_info.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
+import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -133,7 +134,19 @@ class UpcomingCard extends StatelessWidget {
 
               Expanded(
                 child:  GestureDetector(
-                  onTap:  () { },
+                  onTap:  () {
+                    String link = booking.studentMeetingLink!;
+                    String token = link.split('=')[1];
+                    String b64 = token.split('.')[1];
+
+                    List<int> res = base64.decode(base64.normalize(b64));
+
+                    Map<String,dynamic> info = jsonDecode(utf8.decode(res));
+                    
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SafeArea(child: VideoConference(info['room'], token, info['context']['user']['name'] ?? "", info['context']['user']['email'], start ))),
+                  ); },
                   child: Container(
                     alignment: Alignment.center,
                     height: 40,

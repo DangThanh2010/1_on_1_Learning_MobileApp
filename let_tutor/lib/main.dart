@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:let_tutor/advanced_settings/advanced_settings.dart';
 import 'package:let_tutor/authentication/forgot_password.dart';
@@ -5,6 +7,7 @@ import 'package:let_tutor/authentication/sign_up.dart';
 import 'package:let_tutor/become_a_tutor/become_a_tutor.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/myapp.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
@@ -42,7 +45,6 @@ class App extends StatelessWidget{
           "/forgot_password": (context) => SafeArea(child: ForgotPassword()),
           "/sign_up": (context) => SafeArea(child: SignUp()),
           "/profile": (context) => SafeArea(child: Profile()),
-          "/video_conference": (context) => SafeArea(child: VideoCoference()),
           "/become_a_tutor": (context) => SafeArea(child: BecomeATutor()),
           "/feedback_list": (context) => SafeArea(child: FeedbackList()),
           "/session_history": (context) => SafeArea(child: SessionHistory()),
