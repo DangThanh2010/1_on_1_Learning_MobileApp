@@ -1,12 +1,21 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/check_box.dart';
 import 'package:let_tutor/become_a_tutor/part_name.dart';
 import 'package:let_tutor/global_widget/button.dart';
+import 'package:let_tutor/global_widget/country_list_pick.dart';
 import 'package:let_tutor/global_widget/date_input.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class BecomeATutor extends StatefulWidget {
   @override
@@ -14,6 +23,9 @@ class BecomeATutor extends StatefulWidget {
 }
 
 class _BecomeATutorState extends State<BecomeATutor>{
+
+  FilePickerResult? image = null;
+  FilePickerResult? video = null;
   String name = "";
   String country = "";
   String birthDay = "";
@@ -25,6 +37,57 @@ class _BecomeATutorState extends State<BecomeATutor>{
   String introduction = "";
   String level = "";
   List<String> specialties = <String>[];
+
+  void register () async{
+    if (image != null && video != null) {
+      PlatformFile fileImage = image!.files.first;
+      PlatformFile fileVideo = video!.files.first;
+
+      final prefs = await SharedPreferences.getInstance();
+      Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+      var request = http.MultipartRequest('PUT', Uri.parse(APILINK + "tutor/register"));
+      Map<String, String> headers= <String,String>{
+        "Content-Type": "multipart/form-data",
+        'Authorization':'Bearer ' + (access.token ?? '0'),
+
+      };
+      request.headers.addAll(headers);
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'avatar',
+          fileImage.path ?? "",
+        )
+      );
+       request.files.add(
+        await http.MultipartFile.fromPath(
+          'video',
+          fileVideo.path ?? "",
+        )
+      );
+
+      String spes = "";
+      specialties.map((e) => spes += e);
+
+      request.fields.addAll({
+        "name": name,
+        "country": country,
+        "birthday": birthDay,
+        "interests": interestes,
+        "education": education,
+        "experience": experience,
+        "profession": profession,
+        "languages": languages,
+        "bio": introduction,
+        "targetStudent": level,
+        "specialties": spes,
+        "price": "50000"
+      });
+
+      await request.send();
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +105,13 @@ class _BecomeATutorState extends State<BecomeATutor>{
         child: ListView(
           children: [
             PartName(setting.language == "English" ? 'Basic info' : "Thông tin cơ bản"),
-
             GestureDetector(
-              onTap: () {},
+              onTap: () async{
+                FilePickerResult? res = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+                setState(() {
+                  image = res;
+                });
+              },
               child:  Center(
                 child: Container(
                   width: 100,
@@ -55,7 +122,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
                   ),
                   child: Center(
                     child: Text(
-                      setting.language == "English" ? 'Upload avatar here...' : "Đăng tải ảnh ở đây...",
+                      setting.language == "English" ? (image == null ? 'Upload avatar here...' : 'Uploaded'): (image == null ? "Đăng tải ảnh ở đây..." : "Đã chọn ảnh"),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                     )
@@ -67,9 +134,10 @@ class _BecomeATutorState extends State<BecomeATutor>{
             TextInput(setting.language == "English" ? "Tutor's name" : "Họ tên", setting.language == "English" ? "Tutor's name" : "Họ tên", false, TextInputType.text, (String value){setState(() {
               name = value;
             });}),
-            SelectedInput(setting.language == "English" ? "I'm from" : "Tôi đến từ", setting.language == "English" ? "Country" : "Quốc gia", (String value){ setState(() {
+            CountryListPickWidget("VN", setting.language == "English" ? "I'm from" : "Tôi đến từ", (String value){ setState(() {
               country = value;
-            });},['Vietnam', 'Japan', 'Korean', 'Thailand']),
+            });}),
+           
             DateInput(setting.language == "English" ? "Date of Birth" : "Ngày sinh", setting.language == "English" ? "Date of Birth" : "Ngày sinh", false, (String value){ setState(() {
               birthDay = value;
             });}),
@@ -101,7 +169,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
 
             SelectedInput(setting.language == "English" ? 'I am best at teaching students who are' : "Tôi sẽ giảng dạy tốt nhất ở trình độ", setting.language == "English" ? 'Level' : "Trình độ", (String value){setState(() {
               level = value;
-            });}, ['Beginner', 'Intermediate', 'Advanced']),
+            });}, ['BEGINNER', "HIGHER_BEGINNER", "PRE_INTERMEDIATE",  "INTERMEDIATE", "UPPER_INTERMEDIATE", "ADVANCED", "PROFICIENCY"]),
 
             Container(
               margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -152,7 +220,12 @@ class _BecomeATutorState extends State<BecomeATutor>{
             PartName(setting.language == "English" ? 'Video introduce' : "Video giới thiệu"),
 
             GestureDetector(
-              onTap: () {},
+              onTap: () async{
+                FilePickerResult? res  = await FilePicker.platform.pickFiles(type: FileType.video, withData: true);
+                setState(() {
+                  video = res;
+                });
+              },
               child: Center(
                 child: Container(
                   width: 300,
@@ -163,7 +236,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
                   ),
                   child: Center(
                     child: Text(
-                      setting.language == "English" ? 'Upload video here...': "Đăng tải video ở đây...",
+                      setting.language == "English" ? (video == null ? 'Upload video here...' : "Uploaded"): (video == null ? "Đăng tải video ở đây..." : "Đã chọn video"),
                       textAlign: TextAlign.center,
                       style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),
                     )
@@ -174,7 +247,10 @@ class _BecomeATutorState extends State<BecomeATutor>{
 
             Container(
               margin: const EdgeInsets.only(bottom: 20),
-              child: Button(setting.language == "English" ? 'Submit': "Gửi", () {Navigator.pop(context);}),
+              child: Button(setting.language == "English" ? 'Submit': "Gửi", () {
+                register();
+                Navigator.pop(context);
+              }),
             )
           ],
         ),
