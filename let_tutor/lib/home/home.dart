@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/config.dart';
 import 'package:let_tutor/home/tutor_card.dart';
 import 'package:let_tutor/home/white_button.dart';
+import 'package:let_tutor/model/booking_info.dart';
+import 'package:let_tutor/model/list_booking.dart';
 import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
@@ -36,42 +38,61 @@ class Home extends StatelessWidget {
       return ListTutor();
     }
   }
-  /*
-  int getTimeToLearn(ListBookingDTO bookings){
-    int result = 0;
-    for(int i = 0; i < bookings.list.length; i++){
-      if(bookings.list[i].end.compareTo(DateTime.now()) < 0 && bookings.list[i].isCancel == false){
-        //result += bookings.list[i].end.difference(bookings.list[i].start).inSeconds;
-      }
+
+  Future<ListBooking> fetchUpcoming () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    
+    int timestamp = DateTime.now().millisecondsSinceEpoch - (1000 * 60 * 36);
+    var res = await http.get(Uri.parse(APILINK + "booking/list/student?page=1&perPage=20&dateTimeGte=" + timestamp.toString()+ "&orderBy=meeting&sortBy=asc"),
+                headers: {
+                  "Content-Type": "application/json",
+                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+                });
+    if(res.statusCode == 200){
+      var listUpcoming = ListBooking.fromJson(jsonDecode(res.body)['data']); 
+      
+      return listUpcoming;  
+    }else {
+      return ListBooking();
     }
-    return result;
-  }*/
-
-  String timeToLearnToString(int seconds, Setting setting){
-    int second = seconds % 60;
-    int minute = (seconds ~/ 60) % 60;
-    int hour = (seconds ~/ 60) ~/ 60;
-
-    String result = (hour < 10 ? ('0' + hour.toString()) : hour.toString()) + (setting.language == "English" ? ' hours ' : ' giờ ') + (minute < 10 ? ('0' + minute.toString()) : minute.toString()) + (setting.language == "English" ? ' minutes ' : ' phút ') + (second < 10 ? ('0' + second.toString()) : second.toString()) + (setting.language == "English" ? ' seconds' : ' giây');
-
-    return result;
   }
 
-/*
-  List<BookingDTO> getListUpcoming(ListBookingDTO bookings){
-    List<BookingDTO> result = [];
-    for(int i = 0; i < bookings.list.length; i++){
-      if(DateTime.now().compareTo(bookings.list[i].end) < 0 && bookings.list[i].isCancel == false){
-        result.add(bookings.list[i]);
-      }
+  Future<int> fetchTotalHour () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.get(Uri.parse(APILINK + "call/total"),
+                headers: {
+                  "Content-Type": "application/json",
+                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+                });
+    if(res.statusCode == 200){
+      var minutes = jsonDecode(res.body)['total']; 
+      
+      return minutes;  
+    }else {
+      return 0;
     }
+  }
+
+  String timeToLearnToString(int minutes, Setting setting){
+    
+    int minute = minutes % 60;
+    int hour = minutes ~/ 60;
+
+    String result = (hour < 10 ? ('0' + hour.toString()) : hour.toString()) + (setting.language == "English" ? ' hours ' : ' giờ ') + (minute < 10 ? ('0' + minute.toString()) : minute.toString()) + (setting.language == "English" ? ' minutes ' : ' phút ');
+
     return result;
   }
 
-  String dateOfUpcomingToString(BookingDTO booking){
-    return (booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()) + ':' + (booking.start.second < 10 ? ('0' + booking.start.second.toString()) : booking.start.second.toString()) + ', ' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()) + '/' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '/' + booking.start.year.toString();
+  String dateOfUpcomingToString(BookingInfo booking){
+    DateTime start = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.startPeriodTimestamp! * 1000, isUtc: false);
+    
+    return (start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()) + ':' + (start.second < 10 ? ('0' + start.second.toString()) : start.second.toString()) + ', ' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString()) + '/' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '/' + start.year.toString();
   }
-  */
+  
 
   int sortTutor(Tutor a, Tutor b, ListTutor list){
 
@@ -125,59 +146,81 @@ class Home extends StatelessWidget {
                 children: [
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
-                      child: 
-                      Text(
-                        setting.language == "English" ? 'Total lesson time is ' : 'Tổng thời gian đã học ',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      )
+                      child: FutureBuilder<int>(
+                        future: fetchTotalHour(),
+                        builder: (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return (
+                              Text(
+                                setting.language == "English" ? 'Total lesson time is ${timeToLearnToString(snapshot.data, setting)}' : 'Tổng thời gian đã học ${timeToLearnToString(snapshot.data, setting)}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              )
+                            );
+                          }
+                          return Container();
+                        }
+                      ),
                     ),
-
-                    
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: 
-                      Text(
-                        setting.language == "English" ? 'Upcoming lesson' : 'Buổi học sắp diễn ra',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
+                        Text(
+                          setting.language == "English" ? 'Upcoming lesson' : 'Buổi học sắp diễn ra',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
                       )
                     ),
-                    /*
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: getListUpcoming(bookings).isNotEmpty ?  [
-                        Container(
-                          margin: const EdgeInsets.only(right: 5),
-                          child: Text(
-                            dateOfUpcomingToString(getListUpcoming(bookings)[0]),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
+
+                    FutureBuilder<ListBooking>(
+                      future: fetchUpcoming(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          if(snapshot.data.rows == null){
+                            return Container();
+                          }
+                          if(snapshot.data.rows.length == 0){
+                            return(
+                              Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                  child: Text(
+                                    setting.language == "English" ? 'No upcoming lesson' : 'Không có buổi học sắp diễn ra',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    )
+                                  )
+                                )
+                            );
+                          }
+                          return (
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: 
+                                [Container(
+                                  margin: const EdgeInsets.only(right: 5),
+                                  child: Text(
+                                    dateOfUpcomingToString(snapshot.data.rows[0]),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    )
+                                  )
+                                ), 
+                                WhiteButton(setting.language == "English" ? 'Enter lesson room' : 'Vào lớp', (){ Navigator.pushNamed(context, "/video_conference");})
+                              ] 
                             )
-                          )
-                        ), 
-                        WhiteButton(setting.language == "English" ? 'Enter lesson room' : 'Vào lớp', (){ Navigator.pushNamed(context, "/video_conference");})
-                      ] : [
-                        Container(
-                          margin: const EdgeInsets.only(right: 5),
-                          child: Text(
-                            setting.language == "English" ? 'No upcoming lesson' : 'Không có buổi học sắp diễn ra',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            )
-                          )
-                        ), 
-                      ],
+                          );     
+                        }
+                        return Container();
+                      }
                     ),
-                    */
                     Container(
                       margin: const EdgeInsets.only(top: 10),
                       child: WhiteButton(setting.language == "English" ? 'Book more' : 'Đặt lịch', (){ setSelectedIndex(3); })
