@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:let_tutor/data_access/booking_dao.dart';
-import 'package:let_tutor/model/booking_dto.dart';
-import 'package:let_tutor/model/list_booking_dto.dart';
-import 'package:let_tutor/model/list_tutor_dto.dart';
+import 'package:let_tutor/model/booking_info.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/tutor_dto.dart';
 import 'package:provider/provider.dart';
 
 class UpcomingCard extends StatelessWidget {
   UpcomingCard(this.booking);
 
-  final BookingDTO booking;
+  final BookingInfo booking;
 
   @override
   Widget build(BuildContext context) {
-    ListTutorDTO tutors = context.watch<ListTutorDTO>();
-    TutorDTO? tutor = tutors.getTutor(booking.idTutor);
-    ListBookingDTO bookings = context.watch<ListBookingDTO>();
+   
     Setting setting = context.watch<Setting>();
-    int hourDifference = booking.start.difference(DateTime.now()).inHours;
+
+
+    DateTime start = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.startPeriodTimestamp! * 1000, isUtc: false);
+    DateTime end = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.endPeriodTimestamp! * 1000, isUtc: false);
+
+    int hourDifference = start.difference(DateTime.now()).inHours;
 
     return Card(
       color: setting.theme == "White" ? Colors.white : Colors.grey[800],
@@ -36,7 +35,7 @@ class UpcomingCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(tutor!.avatar),
+                    image: NetworkImage(booking.scheduleDetailInfo!.scheduleInfo!.tutorInfo!.avatar!),
                   )
                 ),
               ),
@@ -45,15 +44,15 @@ class UpcomingCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tutor.name, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
+                    Text(booking.scheduleDetailInfo!.scheduleInfo!.tutorInfo!.name!, style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),),
                     Row(
                       children: [ 
-                        Text(booking.start.year.toString() + '-' + (booking.start.month < 10 ? ('0' + booking.start.month.toString()) : booking.start.month.toString()) + '-' + (booking.start.day < 10 ? ('0' + booking.start.day.toString()) : booking.start.day.toString()),
+                        Text(start.year.toString() + '-' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '-' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString()),
                             style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),),
                         Container(
                           padding: const EdgeInsets.all(5),
                           margin: const EdgeInsets.only(left: 5, right: 5),
-                          child: Text((booking.start.hour < 10 ? ('0' + booking.start.hour.toString()) : booking.start.hour.toString()) + ':' + (booking.start.minute < 10 ? ('0' + booking.start.minute.toString()) : booking.start.minute.toString()), style: const TextStyle(color: Colors.blue),),
+                          child: Text((start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()), style: const TextStyle(color: Colors.blue),),
                           decoration: BoxDecoration(
                             color: Colors.blue[50],
                             borderRadius: BorderRadius.circular(10)
@@ -65,7 +64,7 @@ class UpcomingCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(5),
                           margin: const EdgeInsets.only(left: 5,right: 5),
-                          child: Text((booking.end.hour < 10 ? ('0' + booking.end.hour.toString()) : booking.end.hour.toString()) + ':' + (booking.end.minute < 10 ? ('0' + booking.end.minute.toString()) : booking.end.minute.toString()), style: const TextStyle(color: Colors.red),),
+                          child: Text((end.hour < 10 ? ('0' + end.hour.toString()) : end.hour.toString()) + ':' + (end.minute < 10 ? ('0' + end.minute.toString()) : end.minute.toString()), style: const TextStyle(color: Colors.red),),
                           
                           decoration: BoxDecoration(
                             color: Colors.red[50],
@@ -83,10 +82,8 @@ class UpcomingCard extends StatelessWidget {
             children: [
               Expanded(
                 child:  GestureDetector(
-                  onTap: hourDifference >= 2 ? () async{
-                    BookingDAO bookingDAO = BookingDAO();
-                    await bookingDAO.update(booking.id, BookingDTO(booking.id, booking.idTutor, booking.start, booking.end, true, booking.isFeedbacked));
-                    bookings.setCancel(booking.id);
+                  onTap: hourDifference >= 2 ? () {
+                    
                   } : null,
                   child: Container(
                     alignment: Alignment.center,
@@ -106,7 +103,7 @@ class UpcomingCard extends StatelessWidget {
 
               Expanded(
                 child:  GestureDetector(
-                  onTap:  () { Navigator.pushNamed(context, "/video_conference");},
+                  onTap:  () { },
                   child: Container(
                     alignment: Alignment.center,
                     height: 40,

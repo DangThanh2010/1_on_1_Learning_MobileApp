@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:let_tutor/model/schedule_detail_info.dart';
 
 part 'booking_info.g.dart';
 
@@ -18,6 +19,8 @@ class BookingInfo {
   String? updatedAt;
   String? recordUrl;
   bool? isDeleted;
+  ScheduleDetailInfo? scheduleDetailInfo;
+  bool? showRecordUrl;
 
   BookingInfo(
       {this.createdAtTimeStamp,
@@ -33,7 +36,9 @@ class BookingInfo {
       this.createdAt,
       this.updatedAt,
       this.recordUrl,
-      this.isDeleted});
+      this.isDeleted,
+      this.scheduleDetailInfo,
+      this.showRecordUrl});
   
   factory BookingInfo.fromJson(Map<String, dynamic> json) => _$BookingInfoFromJson(json);
 
