@@ -33,7 +33,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           .toList(),
       isPhoneActivated: json['isPhoneActivated'] as bool?,
       timezone: json['timezone'] as int?,
-      avgRating: json['avgRating'] as int?,
+      avgRating: json['avgRating'] as num?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{

@@ -45,6 +45,7 @@ dependencies:
   video_player:
   flutter_cached_pdfview: ^0.4.1
   country_list_pick: ^1.0.1+5
+  file_picker: ^4.3.2
   
 
 dev_dependencies:

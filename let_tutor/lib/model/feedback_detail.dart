@@ -5,7 +5,7 @@ part 'feedback_detail.g.dart';
 
 @JsonSerializable()
 class FeedbackDetail {
-  int? rating;
+  num? rating;
   String? content;
   String? createdAt;
   FeedbackUserInfo? firstInfo;

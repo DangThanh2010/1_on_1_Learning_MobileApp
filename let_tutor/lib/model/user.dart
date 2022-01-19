@@ -26,7 +26,7 @@ class User {
   List<LearnTopic>? testPreparations;
   bool? isPhoneActivated;
   int? timezone;
-  int? avgRating;
+  num? avgRating;
 
   User(
       {this.id,

@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/check_box.dart';
@@ -9,6 +11,7 @@ import 'package:let_tutor/global_widget/country_list_pick.dart';
 import 'package:let_tutor/global_widget/date_input.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
+
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/user.dart';
@@ -16,6 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:file_picker/file_picker.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -24,6 +28,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile>{
+
+  String name = "";
+  String birthday = "";
+  String phone = "";
+  String country = "";
+  String level = "";
+  List<String> learnTopics = [];
+  List<String> testPreparations = [];
+
+  bool isLoading = false;
 
   Future<User> fetchUser () async{
     final prefs = await SharedPreferences.getInstance();
@@ -58,6 +72,75 @@ class _ProfileState extends State<Profile>{
     return result;
   }
 
+  void updateUser (name, birthday, phone, country, level, learnTopics, testPreparations) async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    await http.put(Uri.parse(APILINK + "user/info"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "name": name,
+        "country": country,
+        "phone": phone,
+        "birthday": birthday,
+        "level": level,
+        "learnTopics": learnTopics,
+        "testPreparations":testPreparations
+      }));
+    
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  void updateAvatar () async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      print(file);
+
+      final prefs = await SharedPreferences.getInstance();
+      Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+      
+      /*
+      await http.post(Uri.parse(APILINK + "user/uploadAvatar"),
+        headers: {
+          "Content-Type": "application/json",
+          HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+        },
+        body: jsonEncode({
+          "avatar": file.bytes
+        }));
+        */
+      
+      
+      var request = http.MultipartRequest('POST', Uri.parse(APILINK + "user/uploadAvatar"));
+      Map<String, String> headers= <String,String>{
+        "Content-Type": "multipart/form-data",
+        'Authorization':'Bearer ' + (access.token ?? '0'),
+
+      };
+      request.headers.addAll(headers);
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'picture',
+            file.path ?? "",
+          )
+        );
+
+      await request.send();
+      setState(() {
+        isLoading = !isLoading;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +157,7 @@ class _ProfileState extends State<Profile>{
       body: Container(
         color: setting.theme == "White" ? Colors.white : Colors.black,
         child: FutureBuilder<User>(
-          future: fetchUser(),
+          future: isLoading ? fetchUser() : fetchUser(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return  Container(
@@ -95,6 +178,13 @@ class _ProfileState extends State<Profile>{
                   )
                 );
               }
+              learnTopics.addAll(getLearnTopic(snapshot.data).map((e) => e.toString()));
+              testPreparations.addAll(getTestPreparations(snapshot.data).map((e) => e.toString()));
+              name = snapshot.data.name ?? "";
+              birthday = snapshot.data.birthday ?? "";
+              phone = snapshot.data.phone ?? "";
+              country  =snapshot.data.country ?? "";
+              level = snapshot.data.level ?? "";
               return (ListView(
                 children: [
                   Center(
@@ -112,7 +202,7 @@ class _ProfileState extends State<Profile>{
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: NetworkImage(snapshot.data.avatar),
+                                  image:   NetworkImage(snapshot.data.avatar == "https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png" ? "https://res.cloudinary.com/dangthanh/image/upload/v1641804706/AvatarEtutor/user_ryrffo.png" : snapshot.data.avatar),
                                 )
                               ),
                             )
@@ -130,7 +220,7 @@ class _ProfileState extends State<Profile>{
                               ),
                               child: IconButton(
                                 iconSize: 15,
-                                onPressed: () {},
+                                onPressed: () {/*updateAvatar();*/},
                                 icon: const Icon(Icons.camera_alt, color: Colors.white,)
                               )
                             )
@@ -154,12 +244,12 @@ class _ProfileState extends State<Profile>{
                     ),
                   ),
 
-                  TextInput(setting.language == "English" ? 'Full name' : 'Họ tên', snapshot.data.name, false, TextInputType.text, (String value){}),
-                  DateInput(setting.language == "English" ? 'Birthday' : 'Ngày sinh', snapshot.data.birthday , false, (String value){}),
-                  TextInput(setting.language == "English" ? 'Phone number' : 'Số điện thoại', snapshot.data.phone, false, TextInputType.number, (String value){}),
-                  //SelectedInput(setting.language == "English" ? 'Country' : 'Quốc gia', setting.language == "English" ? 'Country' : 'Quốc gia', (String value){}, ['Vietnam', 'Japan', 'Korean', 'Thailand']),
-                  CountryListPickWidget(snapshot.data.country, setting.language == "English" ? 'Country' : 'Quốc gia', (String value){}),
-                  SelectedInput(setting.language == "English" ? 'My level' : 'Trình độ', snapshot.data.level, (String value){}, ['BEGINNER', "HIGHER_BEGINNER", "PRE_INTERMEDIATE",  "INTERMEDIATE", "UPPER_INTERMEDIATE", "ADVANCED", "PROFICIENCY"]),
+                  TextInput(setting.language == "English" ? 'Full name' : 'Họ tên', snapshot.data.name ?? "", false, TextInputType.text, (String value){ name = value;}),
+                  DateInput(setting.language == "English" ? 'Birthday' : 'Ngày sinh', snapshot.data.birthday ?? "" , false, (String value){birthday = value;}),
+                  TextInput(setting.language == "English" ? 'Phone number' : 'Số điện thoại', snapshot.data.phone ?? "", false, TextInputType.number, (String value){ phone = value;}),
+                  
+                  CountryListPickWidget(snapshot.data.country ?? "VN" , setting.language == "English" ? 'Country' : 'Quốc gia', (String value){country = value;}),
+                  SelectedInput(setting.language == "English" ? 'My level' : 'Trình độ', snapshot.data.level ?? "BEGINNER", (String value){ level = value;}, ['BEGINNER', "HIGHER_BEGINNER", "PRE_INTERMEDIATE",  "INTERMEDIATE", "UPPER_INTERMEDIATE", "ADVANCED", "PROFICIENCY"]),
 
                   Container(
                     margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -174,25 +264,113 @@ class _ProfileState extends State<Profile>{
                             style: TextStyle(fontWeight: FontWeight.bold, color: setting.theme == "White" ? Colors.black : Colors.white),
                           )
                         ),
-                        CheckBox(getLearnTopic(snapshot.data).contains(3), 'English for Kids', (String title){}, (String title){}),
-                        CheckBox(getLearnTopic(snapshot.data).contains(4),'Business English', (String title){}, (String title){}),
-                        CheckBox(getLearnTopic(snapshot.data).contains(5),'Conversational English',(String title){}, (String title){}),
+                        CheckBox(getLearnTopic(snapshot.data).contains(3), 'English for Kids', (String title){
+                          if(!learnTopics.contains("3")){
+                            learnTopics.add("3");
+                          }
+                        }, (String title){
+                          if(learnTopics.contains("3")){
+                            learnTopics.remove("3");
+                          }
+                        }),
+                        CheckBox(getLearnTopic(snapshot.data).contains(4),'Business English', (String title){
+                          if(!learnTopics.contains("4")){
+                            learnTopics.add("4");
+                          }
+                        }, (String title){
+                          if(learnTopics.contains("4")){
+                            learnTopics.remove("4");
+                          }
+                        }),
+                        CheckBox(getLearnTopic(snapshot.data).contains(5),'Conversational English',(String title){
+                          if(!learnTopics.contains("5")){
+                            learnTopics.add("5");
+                          }
+                        }, (String title){
+                          if(learnTopics.contains("5")){
+                            learnTopics.remove("5");
+                          }
+                        }),
                         
-                        CheckBox(getTestPreparations(snapshot.data).contains(1), 'STATERS',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(2), 'MOVERS',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(3), 'FLYERS',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(4), 'KET',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(5), 'PET',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(6), 'IELTS',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(7), 'TOEFL',(String title){}, (String title){}),
-                        CheckBox(getTestPreparations(snapshot.data).contains(8), 'TOEIC',(String title){}, (String title){}), 
+                        CheckBox(getTestPreparations(snapshot.data).contains(1), 'STATERS',(String title){
+                          if(!testPreparations.contains("1")){
+                            testPreparations.add("1");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("1")){
+                            testPreparations.remove("1");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(2), 'MOVERS',(String title){
+                          if(!testPreparations.contains("2")){
+                            testPreparations.add("2");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("2")){
+                            testPreparations.remove("2");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(3), 'FLYERS',(String title){
+                          if(!testPreparations.contains("3")){
+                            testPreparations.add("3");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("3")){
+                            testPreparations.remove("3");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(4), 'KET',(String title){
+                          if(!testPreparations.contains("4")){
+                            testPreparations.add("4");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("4")){
+                            testPreparations.remove("4");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(5), 'PET',(String title){
+                          if(!testPreparations.contains("5")){
+                            testPreparations.add("5");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("5")){
+                            testPreparations.remove("5");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(6), 'IELTS',(String title){
+                          if(!testPreparations.contains("6")){
+                            testPreparations.add("6");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("6")){
+                            testPreparations.remove("6");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(7), 'TOEFL',(String title){
+                          if(!testPreparations.contains("7")){
+                            testPreparations.add("7");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("7")){
+                            testPreparations.remove("7");
+                          }
+                        }),
+                        CheckBox(getTestPreparations(snapshot.data).contains(8), 'TOEIC',(String title){
+                          if(!testPreparations.contains("8")){
+                            testPreparations.add("8");
+                          }
+                        }, (String title){
+                          if(testPreparations.contains("8")){
+                            testPreparations.remove("8");
+                          }
+                        }), 
                       ]
                     )
                   ),
 
                   Container(
                     margin: const EdgeInsets.only(bottom: 20),
-                    child: Button(setting.language == "English" ? 'Save' : 'Lưu', () { Navigator.pop(context);}),
+                    child: Button(setting.language == "English" ? 'Save' : 'Lưu', () { updateUser(name, birthday, phone, country, level, learnTopics, testPreparations);}),
                   )
                 ],
               ));

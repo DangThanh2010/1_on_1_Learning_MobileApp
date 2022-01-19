@@ -8,7 +8,7 @@ part of 'feedback_detail.dart';
 
 FeedbackDetail _$FeedbackDetailFromJson(Map<String, dynamic> json) =>
     FeedbackDetail(
-      rating: json['rating'] as int?,
+      rating: json['rating'] as num?,
       content: json['content'] as String?,
       createdAt: json['createdAt'] as String?,
       firstInfo: json['firstInfo'] == null
