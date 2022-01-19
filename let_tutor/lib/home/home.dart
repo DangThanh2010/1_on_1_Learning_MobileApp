@@ -287,7 +287,7 @@ class _HomeState extends State<Home>{
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      child: WhiteButton(setting.language == "English" ? 'Book more' : 'Đặt lịch', (){ setSelectedIndex(3); })
+                      child: WhiteButton(setting.language == "English" ? 'Book more' : 'Đặt lịch', (){ setSelectedIndex(2); })
                     )
                   ]
                 )
@@ -309,7 +309,7 @@ class _HomeState extends State<Home>{
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: (){ setSelectedIndex(3); },
+                        onPressed: (){ setSelectedIndex(2); },
                         child: Text(setting.language == "English" ? 'See all >' : 'Tất cả >')
                       )
                     )

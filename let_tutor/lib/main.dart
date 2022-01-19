@@ -22,8 +22,6 @@ void main() async {
 }
 
 class App extends StatelessWidget{
-  App();
-  
 
   @override
   Widget build(BuildContext context) {

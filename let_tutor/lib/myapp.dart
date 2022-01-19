@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/authentication/sign_in.dart';
 import 'package:let_tutor/courses/courses.dart';
 import 'package:let_tutor/home/home.dart';
-import 'package:let_tutor/message/message.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/settings/settings.dart';
@@ -70,15 +69,12 @@ class _MyAppState extends State<MyApp> {
       return Home(setSelectedIndex);
     }
     else if(selectedIndex == 1){
-      return Message();
-    }
-    else if(selectedIndex == 2){
       return Upcoming();
     }
-    else if(selectedIndex == 3){
+    else if(selectedIndex == 2){
       return TutorsPage();
     }
-    else if(selectedIndex == 4){
+    else if(selectedIndex == 3){
       return Courses();
     }
     else {
@@ -97,11 +93,6 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: const Icon(Icons.home),
               label: setting.language == "English" ? 'Home' : "Trang chủ",
-              backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
-            ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.message),
-              label: setting.language == "English" ? 'Message' : "Tin nhắn",
               backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],
             ),
             BottomNavigationBarItem(

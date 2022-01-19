@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
-import 'package:let_tutor/message_detail/message_detail.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/tutor_detail_info.dart';
@@ -162,11 +161,6 @@ class _TutorDetailState extends State<TutorDetail>{
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        IconText(Icons.chat, setting.language == "English" ? 'Message' : "Nhắn tin", () {
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SafeArea(child: MessageDetail())),
-                        );},),
                         IconText(Icons.report, setting.language == "English" ? 'Report' : "Báo cáo", () {
                           showDialog(
                             context: context,
