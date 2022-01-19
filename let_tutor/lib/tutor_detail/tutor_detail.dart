@@ -165,7 +165,7 @@ class _TutorDetailState extends State<TutorDetail>{
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return ReportDialog(snapshot.data.User.name); 
+                              return ReportDialog(snapshot.data.User.name, id, showSnackBar); 
                             }
                           );
                         },)
