@@ -102,24 +102,9 @@ class _ProfileState extends State<Profile>{
     if (result != null) {
       PlatformFile file = result.files.first;
 
-      print(file);
-
       final prefs = await SharedPreferences.getInstance();
       Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
 
-      
-      /*
-      await http.post(Uri.parse(APILINK + "user/uploadAvatar"),
-        headers: {
-          "Content-Type": "application/json",
-          HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
-        },
-        body: jsonEncode({
-          "avatar": file.bytes
-        }));
-        */
-      
-      
       var request = http.MultipartRequest('POST', Uri.parse(APILINK + "user/uploadAvatar"));
       Map<String, String> headers= <String,String>{
         "Content-Type": "multipart/form-data",
@@ -127,12 +112,12 @@ class _ProfileState extends State<Profile>{
 
       };
       request.headers.addAll(headers);
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'picture',
-            file.path ?? "",
-          )
-        );
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'avatar',
+          file.path ?? "",
+        )
+      );
 
       await request.send();
       setState(() {
@@ -220,7 +205,7 @@ class _ProfileState extends State<Profile>{
                               ),
                               child: IconButton(
                                 iconSize: 15,
-                                onPressed: () {/*updateAvatar();*/},
+                                onPressed: () {updateAvatar();},
                                 icon: const Icon(Icons.camera_alt, color: Colors.white,)
                               )
                             )
