@@ -11,6 +11,7 @@ import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/tutor.dart';
+import 'package:let_tutor/model/user.dart';
 import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 
@@ -89,6 +90,23 @@ class _HomeState extends State<Home>{
     }
   }
 
+  Future<User> fetchUser () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.get(Uri.parse(APILINK + "user/info"),
+                headers: {
+                  "Content-Type": "application/json",
+                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+                });
+    if(res.statusCode == 200){
+      var user = User.fromJson(jsonDecode(res.body)['user']); 
+      return user;
+    }else {
+      return User();
+    }
+  }
+
   String timeToLearnToString(int minutes, Setting setting){
     
     int minute = minutes % 60;
@@ -105,7 +123,6 @@ class _HomeState extends State<Home>{
     return (start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString()) + ':' + (start.second < 10 ? ('0' + start.second.toString()) : start.second.toString()) + ', ' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString()) + '/' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '/' + start.year.toString();
   }
   
-
   int sortTutor(Tutor a, Tutor b, ListTutor list){
 
     if (list.checkFavoriteTutor(a.userId) == true && list.checkFavoriteTutor(b.userId) == false){
@@ -126,22 +143,42 @@ class _HomeState extends State<Home>{
       appBar: AppBar(
         title: Text(setting.language == "English" ? 'Home' : "Trang chủ", style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white),), 
         actions: [
-          GestureDetector(
-            child: Container(
-              margin: const EdgeInsets.only(right: 10),
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('images/avatar.jpg'),
-                )
-              ),
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, "/profile");
-            },
+          FutureBuilder<User>(
+            future: fetchUser(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                if(snapshot.data.id == null){
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Center(
+                      child: Text(setting.language == "English" ? 'Error.' : 'Đã xảy ra lỗi.',
+                                  style: TextStyle(fontWeight: FontWeight.bold,
+                                                  color: setting.theme == "White" ? Colors.black : Colors.white, ),)
+                    )
+                  );
+                }
+                return (
+                  GestureDetector(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(snapshot.data.avatar == "https://www.alliancerehabmed.com/wp-content/uploads/icon-avatar-default.png" ? "https://res.cloudinary.com/dangthanh/image/upload/v1641804706/AvatarEtutor/user_ryrffo.png" : snapshot.data.avatar),
+                        )
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, "/profile");
+                    },
+                  )
+                );
+              }
+              return Container();
+            }
           )
         ],
         backgroundColor: setting.theme == "White" ? Colors.white : Colors.grey[800],

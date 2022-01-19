@@ -25,7 +25,7 @@ class Settings extends StatelessWidget {
         color: setting.theme == "White" ? Colors.white : Colors.black,
         child: ListView(
           children: [
-            AccountInfo(AssetImage('images/avatar.jpg'), 'April Corpuz', 'AprilCorpuz@gmail.com'),
+            AccountInfo(),
 
             Container(
               margin: const EdgeInsets.only(top: 20, bottom: 20),
