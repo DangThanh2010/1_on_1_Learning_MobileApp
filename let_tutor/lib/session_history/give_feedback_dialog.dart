@@ -1,22 +1,25 @@
-/*
+
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:let_tutor/data_access/booking_dao.dart';
-import 'package:let_tutor/data_access/comment_dao.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/selected_input.dart';
 import 'package:let_tutor/global_widget/text_input.dart';
-import 'package:let_tutor/model/comment_dto.dart';
-import 'package:let_tutor/model/list_booking_dto.dart';
-import 'package:let_tutor/model/list_comment_dto.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class GiveFeedbackDialog extends StatefulWidget{
   GiveFeedbackDialog(this.name, this.idTutor, this.idBooking);
 
   final String name;
-  final int idTutor;
-  final int idBooking;
+  final String idTutor;
+  final String idBooking;
 
   @override
   _GiveFeedbackDialogState createState() => _GiveFeedbackDialogState(name, idTutor, idBooking);
@@ -27,14 +30,31 @@ class _GiveFeedbackDialogState extends State<GiveFeedbackDialog>{
   _GiveFeedbackDialogState(this.name, this.idTutor, this.idBooking);
 
   final String name;
-  final int idTutor;
-  final int idBooking;
+  final String idTutor;
+  final String idBooking;
   
   int star = 1;
   String feedback = "";
 
+  Future<int> comment() async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
 
-  Widget setupContent(context, Setting setting, ListCommentDTO comments, ListBookingDTO bookings, int idTutor, int idBooking, int _star, String _feedback) {
+    var res = await http.post(Uri.parse(APILINK + "user/feedbackTutor"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "bookingId": idBooking,
+        "userId": idTutor,
+        "rating": star,
+        "content": feedback
+      }));
+    return (res.statusCode);
+  }
+
+  Widget setupContent(context, Setting setting) {
     return 
       Container(
         color: setting.theme == "White" ? Colors.white : Colors.grey[800],
@@ -55,18 +75,10 @@ class _GiveFeedbackDialogState extends State<GiveFeedbackDialog>{
                        });
                      }),
 
-            Button(setting.language == "English" ? 'Give Feedback' : 'Gửi đánh giá', () async{
-              /*
-              CommentDAO commentDAO = CommentDAO();
-              await commentDAO.insert(CommentDTO(comments.getNextId(), idTutor, _star, _feedback, DateTime.now()));
-              comments.addComment(CommentDTO(comments.getNextId(), idTutor, _star, _feedback, DateTime.now()));
-
-              BookingDTO? booking = bookings.getBooking(idBooking);
-              BookingDAO bookingDAO = BookingDAO();
-              await bookingDAO.update(idBooking, BookingDTO(booking!.id, booking.idTutor, booking.start, booking.end, booking.isCancel, true));
-              bookings.setFeedback(idBooking);
+            Button(setting.language == "English" ? 'Give Feedback' : 'Gửi đánh giá', () {
+              comment();
               Navigator.pop(context);
-              */
+
             })
           ]
         )
@@ -75,8 +87,6 @@ class _GiveFeedbackDialogState extends State<GiveFeedbackDialog>{
 
   @override
   Widget build(BuildContext context) {
-    //ListCommentDTO comments = context.watch<ListCommentDTO>();
-    //ListBookingDTO bookings = context.watch<ListBookingDTO>();
     Setting setting = context.watch<Setting>();
 
     return AlertDialog(
@@ -85,7 +95,7 @@ class _GiveFeedbackDialogState extends State<GiveFeedbackDialog>{
         child: Text(setting.language == "English" ? 'Give feedback for ' + name : "Gửi đánh giá về " + name,
                     style: TextStyle(color: setting.theme == "White" ? Colors.black : Colors.white)),
       ),
-      //content: setupContent(context, setting, comments, bookings, idTutor, idBooking, star, feedback),
+      content: setupContent(context, setting),
     );
   }
-}*/
+}

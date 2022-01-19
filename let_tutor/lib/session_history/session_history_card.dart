@@ -87,14 +87,14 @@ class SessionHistoryCard extends StatelessWidget {
               Expanded(
                 child:  GestureDetector(
                   onTap: () {
-                    /*
+                    
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return GiveFeedbackDialog(tutor.name, tutor.id, booking.id);              
+                        return GiveFeedbackDialog(booking.scheduleDetailInfo!.scheduleInfo!.tutorInfo!.name!, booking.scheduleDetailInfo!.scheduleInfo!.tutorId!, booking.id!);              
                       }
                     );
-                    */
+                    
                   },
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
