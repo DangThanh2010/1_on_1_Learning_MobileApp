@@ -102,12 +102,12 @@ class _TutorDetailState extends State<TutorDetail>{
     Setting setting = context.watch<Setting>();
 
     void showSnackBar(String content){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(content, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),),
-        backgroundColor: Colors.white,
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(content, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),),
+          backgroundColor: Colors.white,
+        ),
+      );
     }
     
     return Scaffold(

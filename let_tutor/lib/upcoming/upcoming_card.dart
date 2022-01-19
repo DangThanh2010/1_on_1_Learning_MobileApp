@@ -1,18 +1,41 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/model/booking_info.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class UpcomingCard extends StatelessWidget {
-  UpcomingCard(this.booking);
+  UpcomingCard(this.booking, this.callBack);
 
   final BookingInfo booking;
+  final void Function(String) callBack;
+
+  Future<int> cancelClass(scheduleId) async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.delete(Uri.parse(APILINK + "booking"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "scheduleDetailIds":  [scheduleId],
+      }));
+    return (res.statusCode);
+  }
 
   @override
   Widget build(BuildContext context) {
    
     Setting setting = context.watch<Setting>();
-
 
     DateTime start = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.startPeriodTimestamp! * 1000, isUtc: false);
     DateTime end = DateTime.fromMicrosecondsSinceEpoch(booking.scheduleDetailInfo!.endPeriodTimestamp! * 1000, isUtc: false);
@@ -82,8 +105,15 @@ class UpcomingCard extends StatelessWidget {
             children: [
               Expanded(
                 child:  GestureDetector(
-                  onTap: hourDifference >= 2 ? () {
-                    
+                  onTap: hourDifference >= 2 ? () async {
+                    int code = await cancelClass(booking.scheduleDetailId);
+
+                    if(code == 200){
+                      callBack(setting.language == "English" ? "Cancel successfully": "Hủy buổi học thành công");
+                    } else {
+                      callBack(setting.language == "English" ? "Cancel unsuccessfully": "Hủy buổi học thất bại");
+                    }
+
                   } : null,
                   child: Container(
                     alignment: Alignment.center,

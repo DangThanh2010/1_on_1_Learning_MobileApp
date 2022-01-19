@@ -55,8 +55,6 @@ class BookingDialog extends StatelessWidget{
     return (res.statusCode);
   }
 
-
-
   List<Widget> generateListButton(List<Schedule>? schedules, BuildContext context, Setting setting){
     List<Widget> result = [];
     schedules!.sort((a,b) => a.startTimestamp! - b.startTimestamp!);

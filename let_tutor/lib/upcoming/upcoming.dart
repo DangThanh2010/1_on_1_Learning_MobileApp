@@ -21,6 +21,7 @@ class Upcoming extends StatefulWidget {
 class _UpcomingState extends State<Upcoming>{
 
   int page = 1;
+  bool isLoading = false;
 
   Future<ListBooking> fetchListUpcoming () async{
     final prefs = await SharedPreferences.getInstance();
@@ -46,6 +47,15 @@ class _UpcomingState extends State<Upcoming>{
   @override
   Widget build(BuildContext context) {
     Setting setting = context.watch<Setting>();
+
+    void showSnackBar(String content){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(content, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),),
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
     
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +65,7 @@ class _UpcomingState extends State<Upcoming>{
       body: Container(
         color: setting.theme == "White" ? Colors.white : Colors.black,
         child: FutureBuilder<ListBooking>(
-          future: fetchListUpcoming(),
+          future: isLoading ?  fetchListUpcoming() : fetchListUpcoming(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return  Container(
@@ -87,7 +97,12 @@ class _UpcomingState extends State<Upcoming>{
                   );
               }
               return ListView(
-                children: snapshot.data.rows.map<Widget>((e) => UpcomingCard(e)).toList() + 
+                children: snapshot.data.rows.map<Widget>((e) => UpcomingCard(e, (content) {
+                  showSnackBar(content);
+                  setState(() {
+                    isLoading = !isLoading;
+                  });
+                })).toList() + 
                   [Container(
                     margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
                       child: Row(
