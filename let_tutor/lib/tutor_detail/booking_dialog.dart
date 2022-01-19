@@ -24,13 +24,13 @@ class BookingDialog extends StatelessWidget{
     Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
 
     var res = await http.post(Uri.parse(APILINK + "schedule"),
-                headers: {
-                  "Content-Type": "application/json",
-                  HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
-                },
-                body: jsonEncode({
-                  "tutorId": id
-                }));
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "tutorId": id
+      }));
     if(res.statusCode == 200){
       var listSchedule = ListSchedule.fromJson(jsonDecode(res.body));  
       return listSchedule;
@@ -38,6 +38,24 @@ class BookingDialog extends StatelessWidget{
       return ListSchedule();
     }
   }
+
+  Future<int> bookClass(scheduleId) async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    var res = await http.post(Uri.parse(APILINK + "booking"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "scheduleDetailIds":  [scheduleId],
+        "note":""
+      }));
+    return (res.statusCode);
+  }
+
+
 
   List<Widget> generateListButton(List<Schedule>? schedules, BuildContext context, Setting setting){
     List<Widget> result = [];
@@ -51,7 +69,14 @@ class BookingDialog extends StatelessWidget{
             Button(start.year.toString() + '-' + (start.month < 10 ? ('0' + start.month.toString()) : start.month.toString()) + '-' + (start.day < 10 ? ('0' + start.day.toString()) : start.day.toString())
             + '\n' + (start.hour < 10 ? ('0' + start.hour.toString()) : start.hour.toString()) + ':' + (start.minute < 10 ? ('0' + start.minute.toString()) : start.minute.toString())
             + '-' + (end.hour < 10 ? ('0' + end.hour.toString()) : end.hour.toString()) + ':' + (end.minute < 10 ? ('0' + end.minute.toString()) : end.minute.toString()),
-            ()  {
+            ()  async{
+              int code = await bookClass(element.scheduleDetails![0].id);
+              if(code == 200){
+                callBack(setting.language == "English" ? "Booking successfully": "Đặt lịch thành công");
+              } else {
+                callBack(setting.language == "English" ? "Booking unsuccessfully": "Đặt lịch thất bại");
+              }
+              Navigator.pop(context);
             })
           );
         }
