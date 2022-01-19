@@ -1,16 +1,26 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:let_tutor/config.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/model/list_tutor.dart';
 import 'package:let_tutor/model/setting.dart';
+import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/tutor.dart';
 import 'package:let_tutor/tutor_detail/tutor_detail.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:http/http.dart' as http;
 
 class TutorCard extends StatelessWidget {
-  TutorCard(this.tutor, this.listTutor);
+  TutorCard(this.tutor, this.listTutor, this.callBack);
 
   final Tutor tutor;
   final ListTutor listTutor;
+
+  final VoidCallback callBack;
 
   List<Widget> generateLanguageTags(){
     List<Tag> tags = [];
@@ -19,6 +29,22 @@ class TutorCard extends StatelessWidget {
       tags.add(Tag(listLanguage[j], true));
     }
     return tags;
+  }
+
+  void setFavoriteTutor () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    await http.post(Uri.parse(APILINK + "user/manageFavoriteTutor"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "tutorId": tutor.userId
+    }));
+
+    callBack();
   }
 
   @override
@@ -72,12 +98,8 @@ class TutorCard extends StatelessWidget {
                               margin: const EdgeInsets.all(10),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
-                                onTap: () async{
-                                  if(listTutor.checkFavoriteTutor(tutor.userId)){
-                                   
-                                  }else{
-                                    
-                                  }
+                                onTap: () {
+                                  setFavoriteTutor();
                                 },
                                 child: listTutor.checkFavoriteTutor(tutor.userId) ? const Icon(Icons.favorite, color: Colors.pink,) : const Icon(Icons.favorite_border, color: Colors.pink,)
                               )

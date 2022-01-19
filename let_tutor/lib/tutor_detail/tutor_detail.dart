@@ -20,10 +20,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 
-class TutorDetail extends StatelessWidget {
+class TutorDetail extends StatefulWidget {
   TutorDetail(this.id);
   
   final String id;
+
+  @override
+  State<StatefulWidget> createState() => _TutorDetailState(id);
+  
+}
+
+class _TutorDetailState extends State<TutorDetail>{
+  _TutorDetailState(this.id);
+  
+  final String id;
+
+  bool isLoading = false;
 
   Future<TutorDetailInfo> fetchTutor () async{
     final prefs = await SharedPreferences.getInstance();
@@ -40,6 +52,25 @@ class TutorDetail extends StatelessWidget {
     }else {
       return TutorDetailInfo();
     }
+  }
+
+  void setFavoriteTutor () async{
+    final prefs = await SharedPreferences.getInstance();
+    Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
+
+    await http.post(Uri.parse(APILINK + "user/manageFavoriteTutor"),
+      headers: {
+        "Content-Type": "application/json",
+        HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
+      },
+      body: jsonEncode({
+        "tutorId": id
+    }));
+
+    setState(() {
+      isLoading = !isLoading;
+    });
+    
   }
 
   Widget titleName(String title){
@@ -81,7 +112,7 @@ class TutorDetail extends StatelessWidget {
     
     return Scaffold(
       body: FutureBuilder<TutorDetailInfo>(
-        future: fetchTutor(),
+        future: isLoading ?  fetchTutor() : fetchTutor(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return  Container(
@@ -113,8 +144,8 @@ class TutorDetail extends StatelessWidget {
                     )
                   ),
 
-                  Intro(NetworkImage(snapshot.data.User.avatar ?? ""), snapshot.data.User.name, snapshot.data.User.country, snapshot.data.avgRating.ceil(), snapshot.data.isFavorite, () async{ 
-                   
+                  Intro(NetworkImage(snapshot.data.User.avatar ?? ""), snapshot.data.User.name, snapshot.data.User.country, snapshot.data.avgRating.ceil(), snapshot.data.isFavorite, () { 
+                    setFavoriteTutor();
                   }),
 
                   Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {

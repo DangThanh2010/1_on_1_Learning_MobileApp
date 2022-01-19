@@ -16,10 +16,21 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home(this.setSelectedIndex);
 
   final void Function(int) setSelectedIndex;
+
+  @override
+  State<StatefulWidget> createState() => _HomeState(setSelectedIndex);
+
+}
+class _HomeState extends State<Home>{
+  _HomeState(this.setSelectedIndex);
+
+  final void Function(int) setSelectedIndex;
+
+  bool isLoading = false;
 
   Future<ListTutor> fetchListTutor () async{
     final prefs = await SharedPreferences.getInstance();
@@ -255,7 +266,7 @@ class Home extends StatelessWidget {
             ),
             
             FutureBuilder<ListTutor>(
-              future: fetchListTutor(),
+              future: isLoading ? fetchListTutor() : fetchListTutor(),
                builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return  Container(
@@ -288,7 +299,11 @@ class Home extends StatelessWidget {
                   }
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCard(e, snapshot.data)).toList()
+                    children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCard(e, snapshot.data, (){
+                      setState(() {
+                        isLoading = !isLoading;
+                      });
+                    })).toList()
                   );
                 }
                 return Container();
