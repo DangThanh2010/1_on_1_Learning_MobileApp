@@ -3,14 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:let_tutor/config.dart';
-import 'package:let_tutor/data/data.dart';
 import 'package:let_tutor/global_widget/button.dart';
 import 'package:let_tutor/global_widget/tag.dart';
 import 'package:let_tutor/message_detail/message_detail.dart';
-import 'package:let_tutor/model/schedule_dto.dart';
 import 'package:let_tutor/model/setting.dart';
 import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/model/tutor_detail_info.dart';
+import 'package:let_tutor/tutor_detail/booking_dialog.dart';
 import 'package:let_tutor/tutor_detail/comment.dart';
 import 'package:let_tutor/tutor_detail/icon_text.dart';
 import 'package:let_tutor/tutor_detail/intro.dart';
@@ -59,27 +58,12 @@ class TutorDetail extends StatelessWidget {
     return tags;
   }
 
-  String dateTimeToString(DateTime dateTime){
-    return (dateTime.hour < 10 ? ('0' + dateTime.hour.toString()) : dateTime.hour.toString()) + ':' + (dateTime.minute < 10 ? ('0' + dateTime.minute.toString()) : dateTime.minute.toString()) + ':' + (dateTime.second < 10 ? ('0' + dateTime.second.toString()) : dateTime.second.toString()) + ', ' + (dateTime.day < 10 ? ('0' + dateTime.day.toString()) : dateTime.day.toString()) + '/' + (dateTime.month < 10 ? ('0' + dateTime.month.toString()) : dateTime.month.toString()) + '/' + dateTime.year.toString();
-  }
-
   List<Widget> generateComments(listComment){
     List<Widget> comments = [];
     for(int j = 0; j < listComment.length; j++){
         comments.add(Comment(NetworkImage(listComment[j].firstInfo.avatar), listComment[j].firstInfo.name, listComment[j].rating, listComment[j].content, listComment[j].createdAt));
     }
     return comments;
-  }
-
-  List<ScheduleDTO> getSchedule(List<ScheduleDTO> listSchedule){
-    List<ScheduleDTO> result = [];
-    for(int i = 0; i < listScheduleDTO.length; i++){
-      if(id == listSchedule[i].idTutor){
-        result.add(listSchedule[i]);
-      }
-    }
-    result.sort((a, b) => a.start.compareTo(b.start));
-    return result;
   }
 
   @override
@@ -134,12 +118,12 @@ class TutorDetail extends StatelessWidget {
                   }),
 
                   Button(setting.language == "English" ? 'Booking' : 'Đặt lịch', () {
-                    /*showDialog(
+                    showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return BookingDialog(getSchedule(schedules), showSnackBar);
+                        return BookingDialog(id, showSnackBar);
                       }
-                    );*/
+                    );
                   }),
 
                   Container(
