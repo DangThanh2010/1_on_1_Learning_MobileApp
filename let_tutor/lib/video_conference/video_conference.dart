@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
-
+import 'package:let_tutor/model/setting.dart';
+import 'package:provider/provider.dart';
 
 class VideoConference extends StatefulWidget {
   VideoConference(this.room, this.token, this.name, this.email, this.time);
@@ -42,7 +45,6 @@ class _VideoConferenceState extends State<VideoConference> {
         onError: _onError));
 
     _joinMeeting();
-    Navigator.pop(context);
   }
 
   @override
@@ -53,7 +55,7 @@ class _VideoConferenceState extends State<VideoConference> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return TimeWait(time);
   }
 
   _joinMeeting() async {
@@ -122,6 +124,7 @@ class _VideoConferenceState extends State<VideoConference> {
 
   void _onConferenceTerminated(message) {
     debugPrint("_onConferenceTerminated broadcasted with message: $message");
+    Navigator.pop(context);
   }
 
   _onError(error) {
@@ -165,5 +168,103 @@ class Time {
     } else {
       return Time(hour, minute, second - 1);
     }
+  }
+
+  Time upTime(){
+    return Time(hour, minute, second + 1);
+  }
+}
+
+class TimeWait extends StatefulWidget {
+  TimeWait(this.time);
+
+  final DateTime time;
+
+  @override
+  _TimeWaitState createState() => _TimeWaitState(time);
+
+}
+
+class _TimeWaitState extends State<TimeWait>{
+
+  _TimeWaitState(this.time);
+
+  final DateTime time;
+
+  Time timeWait = Time(0,0,0);
+  bool wait = true;
+
+  @override
+  void initState() {
+    super.initState();
+    if(DateTime.now().difference(time).inSeconds < 0){
+      int seconds = time.difference(DateTime.now()).inSeconds;
+      int second = seconds % 60;
+      int minute = (seconds ~/ 60) % 60;
+      int hour = (seconds ~/ 60) ~/ 60;
+      timeWait = Time(hour, minute, second);
+      wait = true;
+    } else {
+      int seconds = DateTime.now().difference(time).inSeconds;
+      int second = seconds % 60;
+      int minute = (seconds ~/ 60) % 60;
+      int hour = (seconds ~/ 60) ~/ 60;
+      timeWait = Time(hour, minute, second);
+      wait = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Setting setting = context.watch<Setting>();
+
+    Timer timer = Timer(const Duration(milliseconds: 1000), () {
+      if(wait){
+        if(timeWait.hour == 0 && timeWait.minute == 0 && timeWait.second == 0){
+          setState(() {
+            timeWait = timeWait.upTime();
+            wait = false;
+          });
+        } else {
+          setState(() {
+            timeWait = timeWait.downTime();
+          });
+        }
+      } else {
+         setState(() {
+          timeWait = timeWait.upTime();
+        });
+      }
+    });
+
+    return Scaffold(
+      body: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            color: Colors.black,
+          ),
+
+          Container(
+            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.3),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey[700],
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: Text(
+              (setting.language == "English" ? (wait ? 'Lesson will be started after\n\n' : 'Lesson lasted\n\n' ) : (wait ? 'Lớp học sẽ bắt đầu sau\n\n' : 'Lớp học đã diễn ra\n\n'))
+              + (timeWait.hour < 10 ? ('0' + timeWait.hour.toString()) : timeWait.hour.toString())
+              + ' : ' + (timeWait.minute < 10 ? ('0' + timeWait.minute.toString()) : timeWait.minute.toString())
+              + ' : ' + (timeWait.second < 10 ? ('0' + timeWait.second.toString()) : timeWait.second.toString()),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            )
+          ),
+        ]
+      ),
+    );
   }
 }

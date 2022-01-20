@@ -24,7 +24,7 @@ class SocialSignin extends StatelessWidget {
               children: [
                 SignInButton.mini(
                   buttonType: ButtonType.google,
-                  onPressed: () {},
+                  onPressed: () { },
                 ),
                 SignInButton.mini(
                   buttonType: ButtonType.facebook,
