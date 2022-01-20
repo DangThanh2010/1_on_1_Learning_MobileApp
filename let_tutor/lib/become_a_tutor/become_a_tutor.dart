@@ -46,7 +46,7 @@ class _BecomeATutorState extends State<BecomeATutor>{
       final prefs = await SharedPreferences.getInstance();
       Token access = Token.fromJson(jsonDecode(prefs.getString('accessToken') ?? '{"token": "0", "expires":"0"}'));
 
-      var request = http.MultipartRequest('PUT', Uri.parse(APILINK + "tutor/register"));
+      var request = http.MultipartRequest('POST', Uri.parse(APILINK + "tutor/register"));
       Map<String, String> headers= <String,String>{
         "Content-Type": "multipart/form-data",
         'Authorization':'Bearer ' + (access.token ?? '0'),
