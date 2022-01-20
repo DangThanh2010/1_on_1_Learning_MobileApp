@@ -69,7 +69,11 @@ class _TutorsPageState extends State<TutorsPage>{
                   "Content-Type": "application/json",
                   HttpHeaders.authorizationHeader: 'Bearer ' + (access.token ?? '0'),
                 },
-                body: json.encode({ "studentRequest": searchValue}));
+                body: json.encode({ 
+                  "search": searchValue,
+                  "page": page,
+                  "perPage": 5
+                }));
     if(res.statusCode == 200){
       var list = Tutors.fromJson(jsonDecode(res.body));
       
@@ -191,7 +195,7 @@ class _TutorsPageState extends State<TutorsPage>{
                       }
                       return ListView(
                         children: snapshot.data.tutors.rows.map<Widget>((e) => TutorCardForSearch(e)).toList() + 
-                        [searchValue != "" ? Container() :
+                        [
                           Container(
                             margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
                             child: Row(
