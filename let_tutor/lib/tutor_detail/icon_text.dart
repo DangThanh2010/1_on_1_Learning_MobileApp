@@ -18,7 +18,7 @@ class IconText extends StatelessWidget {
             child: Icon(icon, color: Colors.blue,)
           ),
 
-          Text(text, style: TextStyle(color: Colors.blue),)
+          Text(text, style: const TextStyle(color: Colors.blue),)
         ],
       )
     );

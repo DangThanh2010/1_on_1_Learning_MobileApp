@@ -43,7 +43,7 @@ class CourseDetail extends StatelessWidget {
       return res;
     }
     catch (e) {
-      return AssetImage("images/course_picture.png");
+      return const AssetImage("images/course_picture.png");
     }
   }
 

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:let_tutor/advanced_settings/advanced_settings.dart';
 import 'package:let_tutor/authentication/forgot_password.dart';
@@ -7,11 +5,9 @@ import 'package:let_tutor/authentication/sign_up.dart';
 import 'package:let_tutor/become_a_tutor/become_a_tutor.dart';
 import 'package:let_tutor/feedback_list/feedback_list.dart';
 import 'package:let_tutor/model/setting.dart';
-import 'package:let_tutor/model/token.dart';
 import 'package:let_tutor/myapp.dart';
 import 'package:let_tutor/profile/profile.dart';
 import 'package:let_tutor/session_history/session_history.dart';
-import 'package:let_tutor/video_conference/video_conference.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

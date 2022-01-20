@@ -12,7 +12,7 @@ class WhiteButton extends StatelessWidget {
       onPressed: callBack,
       child: Text(
         content,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.blue,
         )
       ),
